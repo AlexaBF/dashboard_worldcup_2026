@@ -15,7 +15,7 @@ st.dataframe(df)
 # Team ranking????
 
 #------------------------------------------team overview-------------------------------------
-st.header("team overview :material/scoreboard:")
+st.header("Team Overview :material/group_search:")
 
 #most goals scored
 max_gf=df["goals"].max() 
@@ -68,19 +68,22 @@ with least_ga:
 #---------------------------------------
 #----------------------------------------------------offensive performance--------------------------------------
 st.divider()
-st.header("Offensive performance :material/scoreboard:")
+st.header("Offensive performance :material/arrow_forward:")
 
 
 #-----------------------------------------------defensive-------------------------------------------------
 st.divider()
-st.header("Defensive performance :material/scoreboard:")
+st.header("Defensive performance :material/arrow_back:")
 
 # ------------------------------------------possession--------------------------------------------------------
 st.divider()
-st.header("possesion :material/scoreboard:")
-
+st.header("Team possesion :material/percent:")
 
 
 #-------------------------------------offensive vs defensive performance---------
 st.divider()
-st.header("Offensive vs Defensive Performance")
+st.header("Offensive vs Defensive Performance :material/balance:")
+
+#-----------------------------------------------discipline------------------------------
+st.divider()
+st.header("Team Discipline :material/sports:")

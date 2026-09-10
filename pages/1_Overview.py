@@ -46,7 +46,7 @@ third_place=result.loc[ result["round"]=="Third-place match","winner"].iloc[0]
 final_score=result.loc[ result["round"]=="Final","score"].iloc[0]
 third_score=result.loc[ result["round"]=="Third-place match","score"].iloc[0]
 
-st.subheader("World Cup Podium Finish :material/social_leaderboard:")
+st.header("World Cup Podium Finish :material/social_leaderboard:")
 n1,n2,n3 = st.columns(3)
 n2.metric("First Place", first_place, delta=final_score, delta_arrow="off" , border=True,icon=":material/trophy:")
 n1.metric("Second Place", second_place,delta=final_score,delta_color="red", delta_arrow="off", border=True,icon=":material/trophy:")
@@ -102,7 +102,7 @@ st.dataframe(filtered_df)
 formations = pd.concat([filtered_df["home_formation"], filtered_df["away_formation"]])
 formation_counts = formations.value_counts().head(10)
 
-st.subheader("Most Common Formations")
+st.header("Most Common Formations")
 with st.container(border=True):
     st.bar_chart(formation_counts, x_label="Formation", y_label="Count")
 

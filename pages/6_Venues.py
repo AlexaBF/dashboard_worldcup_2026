@@ -82,7 +82,7 @@ with venue4:
 #st.dataframe(total_venues)
 
 
-st.subheader("Venue Locations :material/map:")
+st.header("Venue Locations :material/map:")
 
 with st.container(border=True):
     country = st.selectbox("Select a country",["All"] + sorted(locations["country"].unique()))
