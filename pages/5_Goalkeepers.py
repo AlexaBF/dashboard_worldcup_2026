@@ -17,7 +17,7 @@ st.dataframe(df)
 # Goals conceded per 90
 # Penalty saves
 
-st.header("Goalkeeper overview :material/group_search:")
+st.header(":material/group_search: Goalkeeper overview")
 
 col1,col2,col3=st.columns(3)
 
