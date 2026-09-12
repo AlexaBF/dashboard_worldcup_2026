@@ -22,14 +22,14 @@ s_place1,s_place2,s_place3 = st.columns(3)
 with s_place1:
     st.metric(label="2nd Place",
     value=top_scorers["player"].iloc[1],
-    delta=f"GOALS: {top_scorers["goals"].iloc[1]:.0f}",
+    delta=f"Goals: {top_scorers["goals"].iloc[1]:.0f}",
     border=True,
     icon=":material/trophy:",
     delta_arrow="off")
 with s_place2:
     st.metric(label="1st Place",
     value=top_scorers["player"].iloc[0],
-    delta=f"GOALS: {top_scorers["goals"].iloc[0]:.0f}",
+    delta=f"Goals: {top_scorers["goals"].iloc[0]:.0f}",
     border=True,
     icon=":material/trophy:",
     delta_arrow="off")
@@ -37,7 +37,7 @@ with s_place2:
 with s_place3:
     st.metric(label="3rd Place",
     value=top_scorers["player"].iloc[2],
-    delta=f"GOALS: {top_scorers["goals"].iloc[2]:.0f}",
+    delta=f"Goals: {top_scorers["goals"].iloc[2]:.0f}",
     border=True,
     icon=":material/trophy:",
     delta_arrow="off")
@@ -51,14 +51,14 @@ a_place1,a_place2,a_place3 = st.columns(3)
 with a_place1:
     st.metric(label="2nd Place",
     value=top_assists["player"].iloc[1],
-    delta=f"ASSISTS: {top_assists["assists"].iloc[1]:.0f}",
+    delta=f"Assists: {top_assists["assists"].iloc[1]:.0f}",
     border=True,
     icon=":material/trophy:",
     delta_arrow="off")
 with a_place2:
     st.metric(label="1st Place",
     value=top_assists["player"].iloc[0],
-    delta=f"ASSISTS: {top_assists["assists"].iloc[0]:.0f}",
+    delta=f"Assists: {top_assists["assists"].iloc[0]:.0f}",
     border=True,
     icon=":material/trophy:",
     delta_arrow="off")
@@ -66,7 +66,7 @@ with a_place2:
 with a_place3:
     st.metric(label="3rd Place",
     value=top_assists["player"].iloc[2],
-    delta=f"ASSISTS: {top_assists["assists"].iloc[2]:.0f}",
+    delta=f"Assists: {top_assists["assists"].iloc[2]:.0f}",
     border=True,
     icon=":material/trophy:",
     delta_arrow="off")
@@ -78,14 +78,30 @@ goal_contributions=df[["player","goals","assists","goals_assists"]].copy()
 max_gc=int(goal_contributions["goals_assists"].max())
 top_gc_player=goal_contributions.loc[ goal_contributions["goals_assists"] == max_gc, "player" ].iloc[0]
 
-st.metric(label="Most goal contributions ",value=top_gc_player, border=True)
+col1,col2=st.columns(2)
+with col1:
+    st.metric(label="Most goal contributions ",
+    value=top_gc_player, 
+    border=True,
+    delta=f"G+A: {max_gc}",
+    icon=":material/workspace_premium:",
+    delta_arrow="off")
+
 
 ##---------------------------golden boot---------
 
 gold_boot=df[["player","goals_assists","minutes"]].copy()
 
 gold_boot_player = (gold_boot.sort_values( ["goals_assists", "minutes"], ascending=[False, True]).iloc[0]["player"])
-st.metric(label="Gold boot Player ",value=gold_boot_player, border=True)
+gold_boot_minutes = (gold_boot.sort_values( ["goals_assists", "minutes"], ascending=[False, True]).iloc[0]["minutes"])
+
+with col2:
+    st.metric(label="Golden Boot Player",
+    value=gold_boot_player,
+    border=True,
+    delta=f"G+A: {max_gc} , Minutes: {gold_boot_minutes:.0f}",
+    icon=":material/workspace_premium:",
+    delta_arrow="off")
 
 #------------------------------------------------players------------------------------------------
 st.divider()
@@ -107,12 +123,7 @@ ps1,ps2,ps3,ps4 = st.tabs(["Attack", "Efficiency", "Defense", "Discipline"])
 #-----------attack
 with ps1:
 
-    attack_df=filtered_players[["player","goals","assists","goals_assists","shots","shots_on_target"]].copy()
-    attack_df["shot_conversion"]= (attack_df["goals"] / attack_df["shots"] ) *100
-
-    #goal contributions
-    ps_max_goal_contributions=int(attack_df["goals_assists"].max())
-    ps_gc_player=attack_df.loc[ attack_df["goals_assists"] == ps_max_goal_contributions, "player" ].iloc[0]
+    attack_df=filtered_players[["player","goals","assists","goals_assists","shots","shots_on_target","minutes"]].copy()
 
     #goals
     ps_max_goals=int(attack_df["goals"].max())
@@ -130,31 +141,39 @@ with ps1:
     ps_max_sot=int(attack_df["shots_on_target"].max())
     ps_max_sot_player=attack_df.loc[ attack_df["shots_on_target"] == ps_max_sot, "player" ].iloc[0]
 
-    #shot conversion rate%(total goals/totalshots) *100
-    ps_max_shot_conversion=int(attack_df["shot_conversion"].max())
-    ps_max_shot_conversion_player=attack_df.loc[ attack_df["shot_conversion"] == ps_max_shot_conversion, "player" ].iloc[0]
 
-    col1,col2,col3=st.columns(3)
+    col1,col2=st.columns(2)
     with col1:
-        st.metric(label="Most goals ",value=ps_max_goals_player, border=True)
-        st.metric(label="Most shots ",value=ps_max_shots_player, border=True)
+        st.metric(label="Most goals ",
+        value=ps_max_goals_player,
+        border=True,
+        delta= f"Goals: {ps_max_goals}", delta_color="blue", delta_arrow="off")
+
+        st.metric(label="Most shots ",
+        value=ps_max_shots_player,
+        border=True,
+        delta= f"Shots: {ps_max_shots}", delta_color="blue", delta_arrow="off")
+        
         
     with col2:
-        st.metric(label="Most assists",value=ps_max_assists_player, border=True)
-        st.metric(label="Most shots on targets ",value=ps_max_sot_player, border=True)
-        
-    with col3:
-        st.metric(label="Most goal contributions ",value=ps_gc_player, border=True)
-        st.metric(label="best shot conversion rate",value=ps_max_shot_conversion_player, border=True)
+        st.metric(label="Most assists",
+        value=ps_max_assists_player,
+        border=True,
+        delta= f"Assists: {ps_max_assists}", delta_color="blue", delta_arrow="off")
 
+        st.metric(label="Most shots on target",
+        value=ps_max_sot_player,
+        border=True,
+        delta= f" SOT: {ps_max_sot}", delta_color="blue", delta_arrow="off")
 
+    
 
     with st.container(border=True):
         st.header(":material/person_celebrate: Goal Contributions")
-        #most goals contributions goals + assits
         
+        #most goals contributions goals + assits
         values = st.slider("Select a range of values", 0, max_gc, (6,max_gc))
-        filtered_df = goal_contributions[(goal_contributions["goals_assists"] >= values[0]) & (df["goals_assists"] <= values[1])]
+        filtered_df = attack_df[(attack_df["goals_assists"] >= values[0]) & (df["goals_assists"] <= values[1])]
         
         st.bar_chart(filtered_df,
         x="player",
@@ -163,18 +182,78 @@ with ps1:
         x_label="Player",
         y_label="Goal Contributions")
 
+    
 
     
 
 #--efficiency
 with ps2:
-    st.header("efficiency")
+    efficiency_df=filtered_players[["player","goals_per90","assists_per90","goals_assists_per90","shots_per90","shots_on_target_per90","minutes"]].copy()
+    efficiency_df["shot_conversion_per90"]= (efficiency_df["goals_per90"] / efficiency_df["shots_per90"] ) *100
+
     #goals/90
+    ps_goals90=efficiency_df["goals_per90"].max()
+    ps_goals90_player=efficiency_df.loc[ efficiency_df["goals_per90"] == ps_goals90, "player" ].iloc[0]
+
     #assists/90
+    ps_assists90=efficiency_df["assists_per90"].max()
+    ps_assists90_player=efficiency_df.loc[ efficiency_df["assists_per90"] == ps_assists90, "player" ].iloc[0]
+
     #goasl+assists/90
-    #shots on target%
+    ps_goals_assists90=efficiency_df["goals_assists_per90"].max()
+    ps_goals_assists90_player=efficiency_df.loc[ efficiency_df["goals_assists_per90"] == ps_goals_assists90, "player" ].iloc[0]
+
+    #shots on target/90
+    ps_shots_on_target90=efficiency_df["shots_on_target_per90"].max()
+    ps_shots_on_target90_player=efficiency_df.loc[ efficiency_df["shots_on_target_per90"] == ps_shots_on_target90, "player" ].iloc[0]
 
 
+    col1,col2=st.columns(2)
+    with col1:
+        st.metric(label="Goals per 90",
+        value=ps_goals90_player,
+        border=True,
+        delta= f"Goals/90: {ps_goals90:.1f}", delta_color="blue", delta_arrow="off")
+
+        st.metric(label="Assits per 90",
+        value=ps_assists90_player,
+        border=True,
+        delta= f"Assits/90: {ps_assists90:.1f}", delta_color="blue", delta_arrow="off")
+
+
+    with col2:
+        st.metric(label="Goal contributions per 90",
+        value=ps_goals_assists90_player,
+        border=True,
+        delta= f"G+A/90: {ps_goals_assists90:.1f}", delta_color="blue", delta_arrow="off")
+
+        st.metric(label="Shots on target per 90",
+        value=ps_shots_on_target90_player,
+        border=True,
+        delta= f"SOT/90: {ps_shots_on_target90:.1f}", delta_color="blue", delta_arrow="off")
+    
+    with st.container(border=True):
+        st.subheader("Goals vs Shots per 90")
+        st.scatter_chart(
+            efficiency_df,
+            x="goals_per90",
+            y="shots_per90",
+            x_label="Goals per 90",
+            y_label="Shots per 90",
+            color="player",
+            size="minutes")
+
+    #Shot conversion rate
+    with st.container(border=True):
+        st.subheader("Shot Conversion vs Shots per 90")
+        st.scatter_chart(
+            efficiency_df,
+            x="shot_conversion_per90",
+            y="shots_per90",
+            x_label="Shot Conversion per 90 %",
+            y_label="Shots per 90",
+            color="player",
+            size="minutes")
 
 
 #--defense
