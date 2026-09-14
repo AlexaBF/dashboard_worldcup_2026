@@ -7,6 +7,7 @@ st.title("PLAYERS")
 def load_data():
     df=pd.read_csv("datasets/players.csv")
     df['club'] = df['club'].fillna('No Club')
+    df = df.fillna(0)
     df = df[df["position"] != "GK"]
     return df
 
@@ -349,8 +350,120 @@ with ps3:
 
 #--discipline 
 with ps4:
-    st.header("discipline")
+    discipline_df=filtered_players[["player","fouls","fouled", "cards_yellow", "cards_red","minutes"]].copy()
+    
     #fouls
+    ps_max_fouls=discipline_df["fouls"].max()
+    ps_max_fouls_player=discipline_df.loc[ discipline_df["fouls"] == ps_max_fouls, "player" ].iloc[0]
+
     #fouled
+    ps_max_fouled=discipline_df["fouled"].max()
+    ps_max_fouled_player=discipline_df.loc[ discipline_df["fouled"] == ps_max_fouled, "player" ].iloc[0]
+
     #cards_yellow
+    ps_max_yellow=discipline_df["cards_yellow"].max()
+    ps_min_yellow=discipline_df["cards_yellow"].min()
+    ps_max_yellow_player=discipline_df.loc[ discipline_df["cards_yellow"] == ps_max_yellow, "player" ].iloc[0]
+    ps_min_yellow_player=discipline_df.loc[ discipline_df["cards_yellow"] == ps_min_yellow, "player" ].iloc[0]
+
     #cards_red
+    ps_max_red=discipline_df["cards_red"].max()
+    ps_min_red=discipline_df["cards_red"].min()
+    ps_max_red_player=discipline_df.loc[ discipline_df["cards_red"] == ps_max_red, "player" ].iloc[0]
+    ps_min_red_player=discipline_df.loc[ discipline_df["cards_red"] == ps_min_red, "player" ].iloc[0]
+    
+    col1,col2,col3=st.columns(3)
+    with col1:
+        st.metric(label="Most Fouls",
+        value=ps_max_fouls_player,
+        border=True,
+        delta= f"Fouls: {ps_max_fouls:.0f}", delta_color="blue", delta_arrow="off")
+
+        st.metric(label="Most Fouled",
+        value=ps_max_fouled_player,
+        border=True,
+        delta= f"Fouls: {ps_max_fouled:.0f}", delta_color="blue", delta_arrow="off") 
+
+
+    with col2:
+        st.metric(label="Least Yellow Cards",
+        value=ps_min_yellow_player,
+        border=True,
+        delta= f"Cards: {ps_max_yellow:.0f}", delta_color="blue", delta_arrow="off")
+
+        st.metric(label="Most Yellow Cards",
+        value=ps_max_yellow_player,
+        border=True,
+        delta= f"Cards: {ps_max_yellow:.0f}", delta_color="blue", delta_arrow="off")
+
+    with col3:
+        st.metric(label="Least Red Cards",
+        value=ps_min_red_player,
+        border=True,
+        delta= f"Cards: {ps_max_red:.0f}", delta_color="blue", delta_arrow="off")
+
+        st.metric(label="Most Red Cards",
+        value=ps_max_red_player,
+        border=True,
+        delta= f"Cards: {ps_max_red:.0f}", delta_color="blue", delta_arrow="off")
+
+
+    #minutes vs fouls
+    with st.container(border=True):
+        st.subheader("Minutes vs Fouls")
+        st.scatter_chart(
+            discipline_df,
+            x="minutes",
+            y="fouls",
+            x_label="Minutes",
+            y_label="Fouls",
+            color="player",
+            size=100)
+
+    #minutes vs yellow
+    with st.container(border=True):
+        st.subheader("Minutes vs Yellow Cards")
+        st.scatter_chart(
+            discipline_df,
+            x="minutes",
+            y="cards_yellow",
+            x_label="Minutes",
+            y_label="Yellow Cards",
+            color="player",
+            size=150)
+
+    #minutes vs red
+    with st.container(border=True):
+        st.subheader("Minutes vs Red Cards")
+        st.scatter_chart(
+            discipline_df,
+            x="minutes",
+            y="cards_red",
+            x_label="Minutes",
+            y_label="Red Cards",
+            color="player",
+            size=150)
+
+
+    #most fouled
+    with st.container(border=True):
+        sort_fouled= discipline_df.sort_values(by='fouled', ascending=False)
+        st.subheader("Top 10 fouled player")
+        st.bar_chart(sort_fouled.head(10),
+        x="player",
+        y="fouled",
+        x_label="Player",
+        y_label="Fouls",   
+        sort="-fouled")
+
+    #most fouls
+    with st.container(border=True):
+        sort_fouls= discipline_df.sort_values(by='fouls', ascending=False)
+        st.subheader("Top 10 players fouls")
+        st.bar_chart(sort_fouled.head(10),
+        x="player",
+        y="fouls",
+        x_label="Player",
+        y_label="Fouls",   
+        sort="-fouls")
+    
