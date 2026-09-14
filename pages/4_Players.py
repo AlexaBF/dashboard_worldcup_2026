@@ -118,7 +118,7 @@ filtered_players = filtered_players[ filtered_players["position"].str.contains( 
 st.dataframe(filtered_players)
 
 
-ps1,ps2,ps3,ps4 = st.tabs(["Attack", "Efficiency", "Defense", "Discipline"])
+ps1,ps2,ps3,ps4 = st.tabs(["Attack", "Efficiency", "Activity", "Discipline"])
 
 #-----------attack
 with ps1:
@@ -256,13 +256,95 @@ with ps2:
             size="minutes")
 
 
-#--defense
+#--activity
 with ps3:
-    st.header("defense")
+    activity_df=filtered_players[["player","tackles_won","interceptions", "offsides", "crosses","minutes"]].copy()
+    
     #tackles_won
+    ps_tackles_won=activity_df["tackles_won"].max()
+    ps_tackles_won_player=activity_df.loc[ activity_df["tackles_won"] == ps_tackles_won, "player" ].iloc[0]
+
     #interceptions
+    ps_interceptions=activity_df["interceptions"].max()
+    ps_interceptions_player=activity_df.loc[ activity_df["interceptions"] == ps_interceptions, "player" ].iloc[0]
+
     #offsides
+    ps_offsides=activity_df["offsides"].max()
+    ps_offsides_player=activity_df.loc[ activity_df["offsides"] == ps_offsides, "player" ].iloc[0]
+
     #crosses
+    ps_crosses=activity_df["crosses"].max()
+    ps_crosses_player=activity_df.loc[ activity_df["crosses"] == ps_crosses, "player" ].iloc[0]
+    
+    col1,col2=st.columns(2)
+    with col1:
+        st.metric(label="Most Tackles Won",
+        value=ps_tackles_won_player,
+        border=True,
+        delta= f"Tackles Won: {ps_tackles_won:.0f}", delta_color="blue", delta_arrow="off")
+
+        st.metric(label="Most Interceptions",
+        value=ps_interceptions_player,
+        border=True,
+        delta= f"Interceptions: {ps_interceptions:.0f}", delta_color="blue", delta_arrow="off")
+
+
+    with col2:
+        st.metric(label="Most offsides",
+        value=ps_offsides_player,
+        border=True,
+        delta= f"Offsides: {ps_offsides:.0f}", delta_color="blue", delta_arrow="off")
+
+        st.metric(label="Most Crosses",
+        value=ps_crosses_player,
+        border=True,
+        delta= f"Crosses: {ps_crosses:.0f}", delta_color="blue", delta_arrow="off")
+
+    #tackles vs interceptions
+    with st.container(border=True):
+        st.subheader("Tackles Won vs Interceptions")
+        st.scatter_chart(
+            activity_df,
+            x="tackles_won",
+            y="interceptions",
+            x_label="Tackles Won",
+            y_label="Interceptions",
+            color="player",
+            size="minutes")
+
+    #minutes vs tackles
+    with st.container(border=True):
+        st.subheader("Minutes vs Tackles Won")
+        st.scatter_chart(
+            activity_df,
+            x="minutes",
+            y="tackles_won",
+            x_label="minutes",
+            y_label="Tackles Won",
+            color="player",
+            size=100)
+    
+    #tackles won players top 10
+    with st.container(border=True):
+        sort_act_tackles = activity_df.sort_values(by='tackles_won', ascending=False)
+        st.subheader("Top 10 tacklers")
+        st.bar_chart(sort_act_tackles.head(10),
+        x="player",
+        y="tackles_won",
+        x_label="Player",
+        y_label="Tackles Won",
+        sort="-tackles_won")
+
+    #crossers players top 10
+    with st.container(border=True):
+        sort_act_tackles = activity_df.sort_values(by='crosses', ascending=False)
+        st.subheader("Top 10 crossers")
+        st.bar_chart(sort_act_tackles.head(10),
+        x="player",
+        y="crosses",
+        x_label="Player",
+        y_label="Crosses",
+        sort="-crosses")
     
 
 #--discipline 
