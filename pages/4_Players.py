@@ -170,19 +170,29 @@ with ps1:
     
 
     with st.container(border=True):
-        st.header(":material/person_celebrate: Goal Contributions")
+        st.header("Goal Contributions")
         
         #most goals contributions goals + assits
         values = st.slider("Select a range of values", 0, max_gc, (6,max_gc))
-        filtered_df = attack_df[(attack_df["goals_assists"] >= values[0]) & (df["goals_assists"] <= values[1])]
+        filtered_attack_df = attack_df[(attack_df["goals_assists"] >= values[0]) & (df["goals_assists"] <= values[1])]
         
-        st.bar_chart(filtered_df,
+        st.bar_chart(filtered_attack_df,
         x="player",
         y=["goals","assists"],
         sort="goals_assists",
         x_label="Player",
         y_label="Goal Contributions")
 
+    with st.container(border=True):
+        st.header("Goal Contributions vs Minutes")
+        st.scatter_chart(
+            attack_df,
+            x="minutes",
+            y="goals_assists",
+            x_label="Minutes",
+            y_label="Goal Contributions",
+            size=100,
+            color="player")
     
 
     
@@ -234,7 +244,7 @@ with ps2:
         delta= f"SOT/90: {ps_shots_on_target90:.1f}", delta_color="blue", delta_arrow="off")
     
     with st.container(border=True):
-        st.subheader("Goals vs Shots per 90")
+        st.header("Goals vs Shots per 90")
         st.scatter_chart(
             efficiency_df,
             x="goals_per90",
@@ -246,7 +256,7 @@ with ps2:
 
     #Shot conversion rate
     with st.container(border=True):
-        st.subheader("Shot Conversion vs Shots per 90")
+        st.header("Shot Conversion vs Shots per 90")
         st.scatter_chart(
             efficiency_df,
             x="shot_conversion_per90",
@@ -303,7 +313,7 @@ with ps3:
 
     #tackles vs interceptions
     with st.container(border=True):
-        st.subheader("Tackles Won vs Interceptions")
+        st.header("Tackles Won vs Interceptions")
         st.scatter_chart(
             activity_df,
             x="tackles_won",
@@ -315,7 +325,7 @@ with ps3:
 
     #minutes vs tackles
     with st.container(border=True):
-        st.subheader("Minutes vs Tackles Won")
+        st.header("Minutes vs Tackles Won")
         st.scatter_chart(
             activity_df,
             x="minutes",
@@ -328,7 +338,7 @@ with ps3:
     #tackles won players top 10
     with st.container(border=True):
         sort_act_tackles = activity_df.sort_values(by='tackles_won', ascending=False)
-        st.subheader("Top 10 tacklers")
+        st.header("Top 10 tacklers")
         st.bar_chart(sort_act_tackles.head(10),
         x="player",
         y="tackles_won",
@@ -339,7 +349,7 @@ with ps3:
     #crossers players top 10
     with st.container(border=True):
         sort_act_tackles = activity_df.sort_values(by='crosses', ascending=False)
-        st.subheader("Top 10 crossers")
+        st.header("Top 10 crossers")
         st.bar_chart(sort_act_tackles.head(10),
         x="player",
         y="crosses",
@@ -410,7 +420,7 @@ with ps4:
 
     #minutes vs fouls
     with st.container(border=True):
-        st.subheader("Minutes vs Fouls")
+        st.header("Minutes vs Fouls")
         st.scatter_chart(
             discipline_df,
             x="minutes",
@@ -422,7 +432,7 @@ with ps4:
 
     #minutes vs yellow
     with st.container(border=True):
-        st.subheader("Minutes vs Yellow Cards")
+        st.header("Minutes vs Yellow Cards")
         st.scatter_chart(
             discipline_df,
             x="minutes",
@@ -434,7 +444,7 @@ with ps4:
 
     #minutes vs red
     with st.container(border=True):
-        st.subheader("Minutes vs Red Cards")
+        st.header("Minutes vs Red Cards")
         st.scatter_chart(
             discipline_df,
             x="minutes",
@@ -448,7 +458,7 @@ with ps4:
     #most fouled
     with st.container(border=True):
         sort_fouled= discipline_df.sort_values(by='fouled', ascending=False)
-        st.subheader("Top 10 fouled player")
+        st.header("Top 10 most fouled players")
         st.bar_chart(sort_fouled.head(10),
         x="player",
         y="fouled",
@@ -459,7 +469,7 @@ with ps4:
     #most fouls
     with st.container(border=True):
         sort_fouls= discipline_df.sort_values(by='fouls', ascending=False)
-        st.subheader("Top 10 players fouls")
+        st.header("Top 10 players with the most fouls")
         st.bar_chart(sort_fouled.head(10),
         x="player",
         y="fouls",
