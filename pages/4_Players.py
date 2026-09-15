@@ -109,29 +109,28 @@ with col2:
 st.divider()
 st.header(":material/filter_alt: Choose players or single player data")
 
-tab_all_players, tab_single_player = st.tabs([":material/groups: Players",":material/person: Player"])
+#team filter
+teams_selected = st.multiselect("Select Teams", df["team"].unique(), default=df["team"].unique())
+filtered_players = df[df["team"].isin(teams_selected)]
 
+#position filter
+position_selected = st.multiselect("Select Position", ["FW", "MF", "DF"] ,default=["FW", "MF", "DF"])
+filtered_players = filtered_players[ filtered_players["position"].str.contains( "|".join(position_selected),na=False)]
+
+#st.dataframe(filtered_players)
+
+tab_all_players, tab_single_player = st.tabs([":material/groups: Players",":material/person: Player"])
 
 #------------------------------------------------players---------------------------------------------------------------------------
 with tab_all_players:
-    st.subheader("Tournament Players' Info")
-
-    #team filter
-    teams_selected = st.multiselect("Select Teams", df["team"].unique(), default=df["team"].unique())
-    filtered_players = df[df["team"].isin(teams_selected)]
-
-    #position filter
-    position_selected = st.multiselect("Select Position", ["FW", "MF", "DF"] ,default=["FW", "MF", "DF"])
-    filtered_players = filtered_players[ filtered_players["position"].str.contains( "|".join(position_selected),na=False)]
-
-    #st.dataframe(filtered_players)
+    st.subheader(":material/groups: Tournament Players' Info")
 
 
-    ps1,ps2,ps3,ps4 = st.tabs(["Attack", "Efficiency", "Activity", "Discipline"])
+    ps1,ps2,ps3,ps4 = st.tabs([":material/sprint: Attack",":material/arrow_shape_up_stack_2: Efficiency",":material/directions_walk: Activity",":material/sports: Discipline"])
 
     #-----------attack
     with ps1:
-
+        st.subheader(":material/sprint: Attack")
         attack_df=filtered_players[["player","goals","assists","goals_assists","shots","shots_on_target","minutes"]].copy()
 
         #goals
@@ -153,24 +152,24 @@ with tab_all_players:
 
         col1,col2=st.columns(2)
         with col1:
-            st.metric(label="Most goals ",
+            st.metric(label=":material/sports_soccer: Most goals",
             value=ps_max_goals_player,
             border=True,
             delta= f"Goals: {ps_max_goals}", delta_color="blue", delta_arrow="off")
 
-            st.metric(label="Most shots ",
+            st.metric(label=":material/shoe_cleats: Most shots",
             value=ps_max_shots_player,
             border=True,
             delta= f"Shots: {ps_max_shots}", delta_color="blue", delta_arrow="off")
             
             
         with col2:
-            st.metric(label="Most assists",
+            st.metric(label=":material/group: Most assists",
             value=ps_max_assists_player,
             border=True,
             delta= f"Assists: {ps_max_assists}", delta_color="blue", delta_arrow="off")
 
-            st.metric(label="Most shots on target",
+            st.metric(label=":material/target: Most shots on target",
             value=ps_max_sot_player,
             border=True,
             delta= f" SOT: {ps_max_sot}", delta_color="blue", delta_arrow="off")
@@ -207,6 +206,7 @@ with tab_all_players:
 
     #--efficiency
     with ps2:
+        st.subheader(":material/arrow_shape_up_stack_2: Efficiency")
         efficiency_df=filtered_players[["player","goals_per90","assists_per90","goals_assists_per90","shots_per90","shots_on_target_per90","minutes"]].copy()
         efficiency_df["shot_conversion_per90"]= (efficiency_df["goals_per90"] / efficiency_df["shots_per90"] ) *100
 
@@ -229,24 +229,24 @@ with tab_all_players:
 
         col1,col2=st.columns(2)
         with col1:
-            st.metric(label="Goals per 90",
+            st.metric(label=":material/sports_soccer: Goals per 90",
             value=ps_goals90_player,
             border=True,
             delta= f"Goals/90: {ps_goals90:.1f}", delta_color="blue", delta_arrow="off")
 
-            st.metric(label="Assits per 90",
+            st.metric(label=":material/group: Assits per 90",
             value=ps_assists90_player,
             border=True,
             delta= f"Assits/90: {ps_assists90:.1f}", delta_color="blue", delta_arrow="off")
 
 
         with col2:
-            st.metric(label="Goal contributions per 90",
+            st.metric(label=":material/sports_and_outdoors: Goal contributions per 90",
             value=ps_goals_assists90_player,
             border=True,
             delta= f"G+A/90: {ps_goals_assists90:.1f}", delta_color="blue", delta_arrow="off")
 
-            st.metric(label="Shots on target per 90",
+            st.metric(label=":material/target: Shots on target per 90",
             value=ps_shots_on_target90_player,
             border=True,
             delta= f"SOT/90: {ps_shots_on_target90:.1f}", delta_color="blue", delta_arrow="off")
@@ -255,10 +255,10 @@ with tab_all_players:
             st.header("Goals vs Shots per 90")
             st.scatter_chart(
                 efficiency_df,
-                x="goals_per90",
-                y="shots_per90",
-                x_label="Goals per 90",
-                y_label="Shots per 90",
+                y="goals_per90",
+                x="shots_per90",
+                y_label="Goals per 90",
+                x_label="Shots per 90",
                 color="player",
                 size="minutes")
 
@@ -267,16 +267,17 @@ with tab_all_players:
             st.header("Shot Conversion vs Shots per 90")
             st.scatter_chart(
                 efficiency_df,
-                x="shot_conversion_per90",
-                y="shots_per90",
-                x_label="Shot Conversion per 90 %",
-                y_label="Shots per 90",
+                y="shot_conversion_per90",
+                x="shots_per90",
+                y_label="Shot Conversion per 90 %",
+                x_label="Shots per 90",
                 color="player",
                 size="minutes")
 
 
     #--activity
     with ps3:
+        st.subheader(":material/directions_walk: Activity")
         activity_df=filtered_players[["player","tackles_won","interceptions", "offsides", "crosses","minutes"]].copy()
         
         #tackles_won
@@ -297,24 +298,24 @@ with tab_all_players:
         
         col1,col2=st.columns(2)
         with col1:
-            st.metric(label="Most Tackles Won",
+            st.metric(label=":material/cheer: Most Tackles Won",
             value=ps_tackles_won_player,
             border=True,
             delta= f"Tackles Won: {ps_tackles_won:.0f}", delta_color="blue", delta_arrow="off")
 
-            st.metric(label="Most Interceptions",
+            st.metric(label=":material/cheer: Most Interceptions",
             value=ps_interceptions_player,
             border=True,
             delta= f"Interceptions: {ps_interceptions:.0f}", delta_color="blue", delta_arrow="off")
 
 
         with col2:
-            st.metric(label="Most offsides",
+            st.metric(label=":material/flag_2: Most offsides",
             value=ps_offsides_player,
             border=True,
             delta= f"Offsides: {ps_offsides:.0f}", delta_color="blue", delta_arrow="off")
 
-            st.metric(label="Most Crosses",
+            st.metric(label=":material/step_over: Most Crosses",
             value=ps_crosses_player,
             border=True,
             delta= f"Crosses: {ps_crosses:.0f}", delta_color="blue", delta_arrow="off")
@@ -368,6 +369,7 @@ with tab_all_players:
 
     #--discipline 
     with ps4:
+        st.subheader(":material/sports: Discipline")
         discipline_df=filtered_players[["player","fouls","fouled", "cards_yellow", "cards_red","minutes"]].copy()
         
         #fouls
@@ -392,35 +394,35 @@ with tab_all_players:
         
         col1,col2,col3=st.columns(3)
         with col1:
-            st.metric(label="Most Fouls",
+            st.metric(label=":material/sports: Most Fouls",
             value=ps_max_fouls_player,
             border=True,
             delta= f"Fouls: {ps_max_fouls:.0f}", delta_color="blue", delta_arrow="off")
 
-            st.metric(label="Most Fouled",
+            st.metric(label=":material/sports: Most Fouled",
             value=ps_max_fouled_player,
             border=True,
             delta= f"Fouls: {ps_max_fouled:.0f}", delta_color="blue", delta_arrow="off") 
 
 
         with col2:
-            st.metric(label="Least Yellow Cards",
+            st.metric(label=":material/crop_2_3: Least Yellow Cards",
             value=ps_min_yellow_player,
             border=True,
             delta= f"Cards: {ps_max_yellow:.0f}", delta_color="blue", delta_arrow="off")
 
-            st.metric(label="Most Yellow Cards",
+            st.metric(label=":material/crop_2_3: Most Yellow Cards",
             value=ps_max_yellow_player,
             border=True,
             delta= f"Cards: {ps_max_yellow:.0f}", delta_color="blue", delta_arrow="off")
 
         with col3:
-            st.metric(label="Least Red Cards",
+            st.metric(label=":material/crop_2_3: Least Red Cards",
             value=ps_min_red_player,
             border=True,
             delta= f"Cards: {ps_max_red:.0f}", delta_color="blue", delta_arrow="off")
 
-            st.metric(label="Most Red Cards",
+            st.metric(label=":material/crop_2_3: Most Red Cards",
             value=ps_max_red_player,
             border=True,
             delta= f"Cards: {ps_max_red:.0f}", delta_color="blue", delta_arrow="off")
@@ -488,11 +490,11 @@ with tab_all_players:
 
 #----------------------------------------------player basic info---------------------------------------------
 with tab_single_player:
-    st.subheader("Tournament Player's Info ")
+    st.subheader(":material/person: Tournament Player's Info ")
 
-    players_list = df["player"].unique().tolist()
+    players_list = filtered_players["player"].unique().tolist()
     selected_player = st.selectbox("Select player", players_list)
-    filtered_player_df = df[df["player"] == selected_player]
+    filtered_player_df = filtered_players[filtered_players["player"] == selected_player]
     st.dataframe(filtered_player_df)
 
     col1,col2,col3=st.columns(3)
@@ -558,7 +560,7 @@ with tab_single_player:
             ##minutes per game
             minutes_pg=play_time_df.iloc[0]["minutes"]/play_time_df.iloc[0]["games"]
             st.metric(label="Minutes per game",
-            value=minutes_pg,
+            value=f"{minutes_pg:.2f}",
             border=True, icon=":material/acute:")
 
         with col3:
