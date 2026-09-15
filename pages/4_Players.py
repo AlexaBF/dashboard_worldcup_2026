@@ -630,6 +630,17 @@ with tab_single_player:
             border=True, icon=":material/shoe_cleats:")
 
 
+        #goals vs non penalties goals
+        with st.container(border=True):
+            st.header("Goals vs Non penalties goals")   
+            st.bar_chart(
+                goal_scoring_df,
+                x="player",
+                y=["goals","goals_pens"],
+                y_label="Goals",
+                color=["orange", "blue"], 
+                stack=False)
+
         #penalties made vs attempt
         with st.container(border=True):
             st.header("Penalties made vs Penalties attempted")   
@@ -745,12 +756,12 @@ with tab_single_player:
                 stack=False)
         
         with st.container(border=True):
-            st.header("Goals vs assists")   
+            st.header("Goals vs assists per 90")   
             st.bar_chart(
                 creativity_df,
                 x="player",
                 y=["goals_per90","assists_per90","goals_assists_per90"],
-                y_label="G+A",
+                y_label="G+A/90",
                 color=["#298c8c","#a00000","orange"],
                 stack=False)
 
@@ -759,39 +770,159 @@ with tab_single_player:
     with tab5:
         st.subheader(":material/sports: Player Discipline")
         
-        #Yellow cards
-        #Red cards
-        #Fouls committed
-        #Fouls suffered
-        #Offsides
+        disciplie_df=filtered_player_df[["player","cards_yellow","cards_red","fouls","fouled"]].copy()
+
+        col1,col2 =st.columns(2)
+        with col1:
+            st.metric(label="Yellow cards",
+            value=int(disciplie_df.iloc[0]["cards_yellow"] ),
+            border=True, icon=":material/crop_2_3:")
+
+            st.metric(label="Red cards",
+            value=int( disciplie_df.iloc[0]["cards_red"] ),
+            border=True, icon=":material/crop_2_3:")    
+
+        with col2:
+            st.metric(label="Fouls committed",
+            value=int( disciplie_df.iloc[0]["fouls"] ),
+            border=True, icon=":material/sports:")
+            
+            st.metric(label="Fouls suffered",
+            value=int( disciplie_df.iloc[0]["fouled"]),
+            border=True, icon=":material/sports:")
+
+            
+        #cards
+        with st.container(border=True):
+            st.header("Yellow cards vs Red cards")   
+            st.bar_chart(
+                disciplie_df,
+                x="player",
+                y=["cards_yellow","cards_red"],
+                y_label="Cards",
+                color=["yellow","red"],
+                stack=False)
         
-        #Card counts
+        
         #Fouls vs. fouled
+        with st.container(border=True):
+            st.header("Fouls vs Fouled")   
+            st.bar_chart(
+                disciplie_df,
+                x="player",
+                y=["fouls","fouled"],
+                y_label="Cards",
+                color=["orange","blue"],
+                stack=False)
         
 
 
     #-Team Impact
     with tab6:
         st.subheader(":material/diversity_3: Player Team Impact")
+
+        team_impact_df=filtered_player_df[["player","points_per_game","plus_minus","plus_minus_per90","plus_minus_wowy","on_goals_for","on_goals_against"]].copy()
+
+        col1,col2,col3=st.columns(3)
+        with col1:
+            st.metric(label="Points per game",
+            value=team_impact_df.iloc[0]["points_per_game"],
+            border=True, icon=":material/spoke:")
+
+            st.metric(label="Plus/Minus WOWY",
+            value=team_impact_df.iloc[0]["plus_minus_wowy"],
+            border=True, icon=":material/unknown_2:")   
+
+        with col2:
+            st.metric(label="Plus/Minus",
+            value=team_impact_df.iloc[0]["plus_minus"],
+            border=True, icon=":material/unknown_2:")
+            
+            st.metric(label="Plus/Minus per 90",
+            value=team_impact_df.iloc[0]["plus_minus_per90"],
+            border=True, icon=":material/unknown_2:")
+
+        with col3:
+            st.metric(label="Goals for while on field",
+            value=int( team_impact_df.iloc[0]["on_goals_for"] ),
+            border=True, icon=":material/grass:")  
+
+            st.metric(label="Goals against while on field",
+            value=int( team_impact_df.iloc[0]["on_goals_against"] ),
+            border=True, icon=":material/grass:") 
+
+            
+        #plus/minus 
+        with st.container(border=True):
+            st.header("Plus/Minus vs Plus/Minus WOWY")   
+            st.bar_chart(
+                team_impact_df,
+                x="player",
+                y=["plus_minus","plus_minus_wowy"],
+                y_label="Plus/Minus",
+                color=["orange","blue"],stack=False)
+
+        with st.container(border=True):
+            st.header("Goals for vs Goals against while on field")   
+            st.bar_chart(
+                team_impact_df,
+                x="player",
+                y=["on_goals_for","on_goals_against"],
+                y_label="Goals",
+                color=["blue","violet"], stack=False)
         
-        #Points per game
-        #Plus/Minus
-        #Plus/Minus per 90
-        #Goals for while on field
-        #Goals against while on field
         
-        #Goals for vs. against
-        #Plus/Minus bar
+        
 
 
-    #-Defensive Metrics (for defenders/midfielders)
+    #-Defensive Metrics
     with tab7:
         st.subheader(":material/shield: Player Defensive Metrics")
-        #Tackles won
-        #Interceptions
-        #Penalties won
-        #Penalties conceded
-        #Own goals
+        defense_df=filtered_player_df[["player","tackles_won", "interceptions","pens_won","pens_conceded", "own_goals"]].copy()
+
+        col1,col2,col3=st.columns(3)
+        with col1:
+            st.metric(label="Tackles won",
+            value=int( defense_df.iloc[0]["tackles_won"] ),
+            border=True, icon=":material/cheer:")
+
+            st.metric(label="Interceptions",
+            value=int( defense_df.iloc[0]["interceptions"] ),
+            border=True, icon=":material/cheer:")   
+
+        with col2:
+            st.metric(label="Penalties won",
+            value=int( defense_df.iloc[0]["pens_won"]),
+            border=True, icon=":material/sentiment_content:")
+            
+            st.metric(label="Penalties conceded",
+            value=int( defense_df.iloc[0]["pens_conceded"] ),
+            border=True, icon=":material/sentiment_dissatisfied:")
+
+        with col3:
+            st.metric(label="Own goals",
+            value=int( defense_df.iloc[0]["own_goals"] ),
+            border=True, icon=":material/sports_and_outdoors:")  
+
+
+        #Interceptions tackles
+        with st.container(border=True):
+            st.header("Interceptions vs Tackles Won")   
+            st.bar_chart(
+                defense_df,
+                x="player",
+                y=["interceptions","tackles_won"],
+                y_label="interceptions and tackles",
+                color=["violet","blue"],stack=False)
+
+
+        #Penalties
+        with st.container(border=True):
+            st.header("Penalties won vs Penalties conceded")   
+            st.bar_chart(
+                defense_df,
+                x="player",
+                y=["pens_won","pens_conceded"],
+                y_label="Penaties",
+                color=["orange","blue"],stack=False)
         
-        #Defensive actions bar chart
-        #Radar chart for defenders
