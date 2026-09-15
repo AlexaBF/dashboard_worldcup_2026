@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 
-st.title("VENUES")
+st.title(":material/map: VENUES")
 
 @st.cache_data
 def load_data():
@@ -78,7 +78,7 @@ with venues2:
 #st.dataframe(total_venues)
 
 
-st.header(":material/map: Venue Locations")
+st.header(":material/location_on: Venue Locations")
 
 with st.container(border=True):
     country = st.selectbox("Select a country",["All"] + sorted(locations["country"].unique()))
