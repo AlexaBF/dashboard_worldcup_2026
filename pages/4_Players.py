@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 
-st.title("PLAYERS")
+st.title(":material/recent_actors: PLAYERS")
 
 @st.cache_data
 def load_data():
@@ -12,9 +12,8 @@ def load_data():
     return df
 
 df=load_data()
-st.dataframe(df)
+#st.dataframe(df)
 
-st.header("Players Performance and Statistics")
 #------------------------------------------Top scorers------------------------------------------
 st.subheader(":material/social_leaderboard: Top Scorers")
 top_scorers=df.sort_values(by=["goals","assists"], ascending=False).head(3)
@@ -79,6 +78,7 @@ goal_contributions=df[["player","goals","assists","goals_assists"]].copy()
 max_gc=int(goal_contributions["goals_assists"].max())
 top_gc_player=goal_contributions.loc[ goal_contributions["goals_assists"] == max_gc, "player" ].iloc[0]
 
+st.subheader(":material/workspace_premium: Individual Recognition")
 col1,col2=st.columns(2)
 with col1:
     st.metric(label="Most goal contributions ",
@@ -107,27 +107,30 @@ with col2:
 #------------------------------------------------------------------------------------------------------------------------
 #------------------------------------------------------------------------------------------------------------------------
 st.divider()
-st.header(":material/filter_alt: Choose players or single player data")
+st.header(":material/user_attributes: Players Performance and Statistics")
 
 #team filter
-teams_selected = st.multiselect("Select Teams", df["team"].unique(), default=df["team"].unique())
+teams_selected = st.multiselect(":material/filter_alt: Select Teams", df["team"].unique(), default=df["team"].unique())
 filtered_players = df[df["team"].isin(teams_selected)]
 
 #position filter
-position_selected = st.multiselect("Select Position", ["FW", "MF", "DF"] ,default=["FW", "MF", "DF"])
+position_selected = st.multiselect(":material/filter_alt: Select Position", ["FW", "MF", "DF"] ,default=["FW", "MF", "DF"])
 filtered_players = filtered_players[ filtered_players["position"].str.contains( "|".join(position_selected),na=False)]
 
 #st.dataframe(filtered_players)
+
 
 tab_all_players, tab_single_player = st.tabs([":material/groups: Players",":material/person: Player"])
 
 #------------------------------------------------players---------------------------------------------------------------------------
 with tab_all_players:
-    st.subheader(":material/groups: Tournament Players' Info")
+    with st.container(border=True):
+        st.subheader(":material/groups: Tournament Players' Info")
 
 
-    ps1,ps2,ps3,ps4 = st.tabs([":material/sprint: Attack",":material/arrow_shape_up_stack_2: Efficiency",":material/directions_walk: Activity",":material/sports: Discipline"])
+        ps1,ps2,ps3,ps4 = st.tabs([":material/sprint: Attack",":material/arrow_shape_up_stack_2: Efficiency",":material/directions_walk: Activity",":material/sports: Discipline"])
 
+    
     #-----------attack
     with ps1:
         st.subheader(":material/sprint: Attack")
@@ -490,50 +493,51 @@ with tab_all_players:
 
 #----------------------------------------------player basic info---------------------------------------------
 with tab_single_player:
-    st.subheader(":material/person: Tournament Player's Info ")
+    with st.container(border=True):
+        st.subheader(":material/person: Tournament Player's Info ")
 
-    players_list = filtered_players["player"].unique().tolist()
-    selected_player = st.selectbox("Select player", players_list)
-    filtered_player_df = filtered_players[filtered_players["player"] == selected_player]
-    st.dataframe(filtered_player_df)
+        players_list = filtered_players["player"].unique().tolist()
+        selected_player = st.selectbox("Select player", players_list)
+        filtered_player_df = filtered_players[filtered_players["player"] == selected_player]
+        #st.dataframe(filtered_player_df)
 
-    col1,col2,col3=st.columns(3)
-    with col1:
-        st.metric(label="Player",
-        value=filtered_player_df.iloc[0]["player"],
-        border=True,
-        icon=":material/person:")
+        col1,col2,col3=st.columns(3)
+        with col1:
+            st.metric(label="Player",
+            value=filtered_player_df.iloc[0]["player"],
+            border=True,
+            icon=":material/person:")
 
-        st.metric(label="Position",
-        value=filtered_player_df.iloc[0]["position"],
-        border=True,
-        icon=":material/person_pin:")
+            st.metric(label="Position",
+            value=filtered_player_df.iloc[0]["position"],
+            border=True,
+            icon=":material/person_pin:")
 
-    with col2:
-        st.metric(label="Team",
-        value=filtered_player_df.iloc[0]["team"],
-        border=True,
-        icon=":material/flag:")
+        with col2:
+            st.metric(label="Team",
+            value=filtered_player_df.iloc[0]["team"],
+            border=True,
+            icon=":material/flag:")
 
-        st.metric(label="Age",
-        value=filtered_player_df.iloc[0]["age"],
-        border=True,
-        icon=":material/calendar_today:")
-
-
-    with col3:
-        st.metric(label="Club",
-        value=filtered_player_df.iloc[0]["club"],
-        border=True,
-        icon=":material/groups:")
-
-        st.metric(label="birth year",
-        value=filtered_player_df.iloc[0]["birth_year"],
-        border=True,
-        icon=":material/perm_contact_calendar:")
+            st.metric(label="Age",
+            value=filtered_player_df.iloc[0]["age"],
+            border=True,
+            icon=":material/calendar_today:")
 
 
-    tab1,tab2,tab3,tab4,tab5,tab6,tab7 = st.tabs([":material/directions_run: Playing Time",":material/scoreboard: Scoring",":material/shoe_cleats: Shooting",":material/person_play: Creativity",":material/sports: Discipline",":material/diversity_3: Team",":material/shield: Defensive"])
+        with col3:
+            st.metric(label="Club",
+            value=filtered_player_df.iloc[0]["club"],
+            border=True,
+            icon=":material/groups:")
+
+            st.metric(label="birth year",
+            value=filtered_player_df.iloc[0]["birth_year"],
+            border=True,
+            icon=":material/perm_contact_calendar:")
+
+
+        tab1,tab2,tab3,tab4,tab5,tab6,tab7 = st.tabs([":material/directions_run: Playing Time",":material/scoreboard: Scoring",":material/shoe_cleats: Shooting",":material/person_play: Creativity",":material/sports: Discipline",":material/diversity_3: Team",":material/shield: Defensive"])
 
     #---playing time
     with tab1:
