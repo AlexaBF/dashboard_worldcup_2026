@@ -10,7 +10,7 @@ def load_data():
     return df
 
 df=load_data()
-st.dataframe(df)
+#st.dataframe(df)
 #print(df.info())
 
 
@@ -67,6 +67,51 @@ with p1:
     with st.container(border=True):
         st.subheader(":material/groups: Tournament Goalkeepers Info")
 
+        bar=filtered_gks[filtered_gks["minutes"]>0].copy()
+        with st.container(border=True):
+            st.subheader("Save %")
+            st.bar_chart(
+                bar,
+                x="player",
+                y="gk_save_pct",
+                x_label="Player",
+                y_label="Save %",
+                sort="-gk_save_pct")
+
+        with st.container(border=True):
+            st.subheader("Saves vs Goals Conceded")
+            st.scatter_chart(
+                filtered_gks,
+                x="gk_goals_against",
+                y="gk_saves",
+                x_label="Goals Conceded",
+                y_label="Saves",
+                size="minutes",
+                color="player")
+
+
+        with st.container(border=True):
+            st.subheader("Clean Sheets")
+            st.scatter_chart(
+                filtered_gks,
+                x="minutes",
+                y="gk_clean_sheets",
+                x_label="Minutes Played",
+                y_label="Clean Sheets",
+                size=100,
+                color="player")
+        
+        with st.container(border=True):
+            st.subheader("Clean Sheets %")
+            st.scatter_chart(
+                filtered_gks,
+                x="minutes",
+                y="gk_clean_sheets_pct",
+                x_label="Minutes Played",
+                y_label="Clean Sheets %",
+                size=100,
+                color="player")
+
         
 
 #--------------------------------------------player---------------------------------
@@ -80,16 +125,116 @@ with p2:
 
         st.dataframe(filtered_gk_data)
 
+        col1,col2=st.columns(2)
+        with col1:
+            st.metric(label="Player",
+            value=filtered_gk_data.iloc[0]["player"],
+            border=True,
+            icon=":material/person:")
 
-#total saves on tournament
-#most Saves
-#Save %
-#Goals against
-#Goals against per 90
-#Clean sheets
-#Clean sheet %
-#Penalty save %
-#Charts
-#Save %
-#Clean sheets
-#Saves vs. goals conceded
+
+            st.metric(label="Age",
+            value=filtered_gk_data.iloc[0]["age"],
+            border=True,
+            icon=":material/calendar_today:")
+        
+
+        with col2:
+            st.metric(label="Team",
+            value=filtered_gk_data.iloc[0]["team"],
+            border=True,
+            icon=":material/flag:")
+
+            st.metric(label="Club",
+            value=filtered_gk_data.iloc[0]["club"],
+            border=True,
+            icon=":material/groups:")
+
+            
+        tab1,tab2,tab3=st.tabs([":material/sports_and_outdoors: Games", ":material/sports_handball: Saves",":material/sports: Disclipline"])
+        with tab1:
+            col1,col2=st.columns(2)
+            with col1:
+                st.metric(label="Games Played",
+                value=filtered_gk_data.iloc[0]["games"],
+                border=True,
+                icon=":material/groups:")
+
+                st.metric(label="Games as a starter",
+                value=filtered_gk_data.iloc[0]["games_starts"],
+                border=True,
+                icon=":material/groups:")
+            with col2:
+                st.metric(label="Clean sheets",
+                value=int( filtered_gk_data.iloc[0]["gk_clean_sheets"] ),
+                border=True,
+                icon=":material/groups:")
+                
+                st.metric(label="Clean sheet %",
+                value=filtered_gk_data.iloc[0]["gk_clean_sheets_pct"],
+                border=True,
+                icon=":material/groups:")
+
+
+        with tab2:
+            col1,col2,col3=st.columns(3)
+            with col1:
+                st.metric(label="Total Saves",
+                value=int( filtered_gk_data.iloc[0]["gk_saves"] ),
+                border=True,
+                icon=":material/groups:")
+
+                st.metric(label="Save %",
+                value=filtered_gk_data.iloc[0]["gk_save_pct"],
+                border=True,
+                icon=":material/groups:")
+
+            with col2:   
+                st.metric(label="Goals against per 90",
+                value=filtered_gk_data.iloc[0]["gk_goals_against_per90"],
+                border=True,
+                icon=":material/groups:")
+
+                st.metric(label="Goals against",
+                value=int( filtered_gk_data.iloc[0]["gk_goals_against"] ),
+                border=True,
+                icon=":material/groups:")
+
+            with col3:
+                st.metric(label="Penalties faced",
+                value=int( filtered_gk_data.iloc[0]["gk_pens_att"]),
+                border=True,
+                icon=":material/groups:")
+
+                st.metric(label="Penalty save %",
+                value=filtered_gk_data.iloc[0]["gk_pens_save_pct"],
+                border=True,
+                icon=":material/groups:")
+
+
+        with tab3:
+            col1,col2=st.columns(2)
+            with col1:
+                st.metric(label="Red Cards",
+                value=int( filtered_gk_data.iloc[0]["cards_red"] ),
+                border=True,
+                icon=":material/crop_2_3:")
+
+                st.metric(label="Yellow Cards",
+                value=int( filtered_gk_data.iloc[0]["cards_yellow"] ),
+                border=True,
+                icon=":material/crop_2_3:")
+
+            with col2:
+                st.metric(label="Fouls committed",
+                value=int( filtered_gk_data.iloc[0]["fouls"] ),
+                border=True,
+                icon=":material/sports:")
+
+                st.metric(label="Fouls suffered",
+                value=int( filtered_gk_data.iloc[0]["fouled"] ),
+                border=True,
+                icon=":material/sports:")
+
+
+        
