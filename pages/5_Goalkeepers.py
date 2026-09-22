@@ -123,7 +123,7 @@ with p2:
         selected_gk = st.selectbox("Select player", gk_list)
         filtered_gk_data = filtered_gks[filtered_gks["player"] == selected_gk]
 
-        st.dataframe(filtered_gk_data)
+        #st.dataframe(filtered_gk_data)
 
         col1,col2=st.columns(2)
         with col1:
@@ -174,7 +174,16 @@ with p2:
                 value=filtered_gk_data.iloc[0]["gk_clean_sheets_pct"],
                 border=True,
                 icon=":material/groups:")
-
+            
+            #games played and clean sheets
+            with st.container(border=True):
+                st.subheader("Games played and Clean sheets")
+                st.bar_chart(
+                    filtered_gk_data,
+                    x="player",
+                    y=["gk_clean_sheets","games"],
+                    stack=False,
+                    color=["orange","blue"])
 
         with tab2:
             col1,col2,col3=st.columns(3)
@@ -195,7 +204,7 @@ with p2:
                 border=True,
                 icon=":material/groups:")
 
-                st.metric(label="Goals against",
+                st.metric(label="Goals conceded",
                 value=int( filtered_gk_data.iloc[0]["gk_goals_against"] ),
                 border=True,
                 icon=":material/groups:")
@@ -210,6 +219,36 @@ with p2:
                 value=filtered_gk_data.iloc[0]["gk_pens_save_pct"],
                 border=True,
                 icon=":material/groups:")
+        
+        #saves and goals
+            with st.container(border=True):
+                st.subheader("Saves vs Goals conceded")
+                st.bar_chart(
+                    filtered_gk_data,
+                    x="player",
+                    y=["gk_saves","gk_goals_against"],
+                    stack=False,
+                    color=["orange","grey"])
+
+            #penalty
+            with st.container(border=True):
+                st.subheader("Penalty saved vs allowed")
+                st.bar_chart(
+                    filtered_gk_data,
+                    x="player",
+                    y=["gk_pens_saved","gk_pens_allowed"],
+                    stack=False,
+                    color=["violet","blue"])
+            
+            with st.container(border=True):
+                st.subheader("Save % vs Peanlty save %")
+                st.bar_chart(
+                    filtered_gk_data,
+                    x="player",
+                    y=["gk_save_pct","gk_pens_save_pct"],
+                    y_label="%",
+                    stack=False,
+                    color=["#FF4B4B", "#1F77B4"])
 
 
         with tab3:
@@ -236,5 +275,23 @@ with p2:
                 border=True,
                 icon=":material/sports:")
 
-
+            with st.container(border=True):
+                st.subheader("Fouls committed  vs suffered")
+                st.bar_chart(
+                    filtered_gk_data,
+                    x="player",
+                    y=["fouls","fouled"],
+                    stack=False,
+                    color=["violet","blue"])
+            
+            with st.container(border=True):
+                st.subheader("Red cards vs Yellow cards")
+                st.bar_chart(
+                    filtered_gk_data,
+                    x="player",
+                    y=["cards_red","cards_yellow"],
+                    y_label="%",
+                    stack=False,
+                    color=["red","yellow"])
+        
         
