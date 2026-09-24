@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 
-st.title("TEAMS") 
+st.title(":material/display_group: TEAMS") 
 
 @st.cache_data
 def load_data():
