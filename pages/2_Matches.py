@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 
-st.title("MATCHES") 
+st.title(":material/scoreboard: MATCHES") 
 
 @st.cache_data
 def load_data():
