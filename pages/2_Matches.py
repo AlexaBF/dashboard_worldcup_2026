@@ -1,5 +1,8 @@
 import streamlit as st
 import pandas as pd
+import altair as alt
+import plotly.express as px
+
 
 st.title(":material/scoreboard: MATCHES") 
 
@@ -90,10 +93,11 @@ with tab1:
 
 with tab2:
 
-    match_metrics=df[["home_team","away_team","round","date","start_time","attendance","venue","referee","home_manager","away_manager","home_captain","away_captain"]].copy()
-
+    #match_metrics=df[[  ate","start_time","attendance","venue","referee","home_manager","away_manager","home_captain","away_captain"]].copy()
+    match_metrics=df.copy()
 
     team = match_metrics["home_team"].unique().tolist()
+    team.sort()
     selected_team= st.selectbox("Select team", team)
 
     mm_home = match_metrics[match_metrics["home_team"] == selected_team]
@@ -108,32 +112,135 @@ with tab2:
     match_metrics = match_metrics[match_metrics["date"] == selected_date]
     #st.dataframe(match_metrics)
 
-    col1, col2 = st.columns(2)
-    with col1:
-        st.metric("Home Team", match_metrics["home_team"].iloc[0],  border=True, icon=":material/sports_and_outdoors:")
-        st.metric("Home Manager", match_metrics["home_manager"].iloc[0],  border=True, icon=":material/sports_and_outdoors:")
-        st.metric("home Captain", match_metrics["home_captain"].iloc[0],  border=True, icon=":material/sports_and_outdoors:")
+    st.header(f"{match_metrics["home_team"].iloc[0]} | {match_metrics["score"].iloc[0]} | {match_metrics["away_team"].iloc[0]}",text_alignment="center")
+    
 
-        st.metric("Round", match_metrics["round"].iloc[0], border=True,icon=":material/calendar_month:")
-        st.metric("Venue", match_metrics["venue"].iloc[0], border=True,icon=":material/calendar_month:")
-        st.metric("Attendance", match_metrics["attendance"].iloc[0],  border=True, icon=":material/sports_and_outdoors:")
+    c1,c2,c3=st.columns(3)
+    with c1:
+        st.caption(f":material/schedule: Date and Time:{match_metrics["date"].iloc[0]}, {match_metrics["start_time"].iloc[0]}",text_alignment="center")
+    with c2:
+        st.caption(f":material/globe_location_pin: Location: {match_metrics["venue"].iloc[0]}",text_alignment="center")
+    with c3:
+        st.caption(f":material/crowdsource: Attendance: {match_metrics["attendance"].iloc[0]}",text_alignment="center")
+
+
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        st.metric(f"{match_metrics["home_team"].iloc[0]} Manager", match_metrics["home_manager"].iloc[0],  border=True, icon=":material/badge:")
+        st.metric(f"{match_metrics["home_team"].iloc[0]} Captain", match_metrics["home_captain"].iloc[0],  border=True, icon=":material/assignment_ind:")
 
     with col2:
-        st.metric("Away Team", match_metrics["away_team"].iloc[0],  border=True, icon=":material/sports_and_outdoors:")
-        st.metric("Away Manager", match_metrics["away_manager"].iloc[0],  border=True, icon=":material/sports_and_outdoors:")
-        st.metric("Away Captain", match_metrics["away_captain"].iloc[0],  border=True, icon=":material/sports_and_outdoors:")
-        st.metric("Date", match_metrics["date"].iloc[0], border=True, icon=":material/sports_soccer:")
-        st.metric("Referee", match_metrics["referee"].iloc[0], border=True,icon=":material/calendar_month:")
-        st.metric("Start Time", match_metrics["start_time"].iloc[0],border=True,icon=":material/event_seat:" )
+        st.metric(f"{match_metrics["away_team"].iloc[0]} Manager", match_metrics["away_manager"].iloc[0],  border=True, icon=":material/badge:")
+        st.metric(f"{match_metrics["away_team"].iloc[0]} Captain", match_metrics["away_captain"].iloc[0],  border=True, icon=":material/assignment_ind:")
 
-    st.subheader("Results")
+    with col3:
+        st.metric("Referee", match_metrics["referee"].iloc[0], border=True,icon=":material/sports:")
+        st.metric("Round", match_metrics["round"].iloc[0], border=True,icon=":material/calendar_month:")
 
-    st.subheader("Match Statistics")
-    st.text("home vs away")
-    st.text(" % possession")
-    st.text("shots")
-    st.text("  corner kicks")
-    st.text("  offsides")
-    st.text("  yellow cards")
-    st.text("  red cards")
-    st.text(" formation of each team")
+
+    st.divider()
+    st.header(":material/query_stats: Match Statistics")
+
+    
+    home_team = match_metrics["home_team"].iloc[0]
+    away_team = match_metrics["away_team"].iloc[0]
+
+    home_possession = match_metrics["home_possession"].iloc[0]
+    away_possession = match_metrics["away_possession"].iloc[0]
+
+    possession = pd.DataFrame({
+        "Team": [home_team, away_team],
+        "Possession": [home_possession, away_possession],
+        "Order": [1, 2]
+    })
+
+    chart = alt.Chart(possession).mark_bar(
+        height=35
+    ).encode(
+        x=alt.X(
+            "Possession:Q",
+            stack="normalize",
+            scale=alt.Scale(domain=[0, 1]),
+            axis=None
+        ),
+        y=alt.value(0),
+        color=alt.Color(
+            "Team:N",
+            scale=alt.Scale(
+                domain=[home_team, away_team],
+                range=['#eb9736','#36A2EB']
+            ),
+            legend=None
+        )
+    ).properties(
+        width=700,
+        height=50
+    )
+
+
+
+    # Get the match
+    match = match_metrics.iloc[0]
+    # Metrics
+    metrics = ["Shots","Shots on target","Corners","Offsides","Yellow cards","Red cards"]
+
+    data_home = pd.DataFrame({
+        "Metric": metrics,
+        "Value": [match["home_total_shots"],match["home_sot"],match["home_corners"],match["home_offsides"],match["home_cards_yellow"],match["home_cards_red"] ]
+    })
+
+
+    data_away = pd.DataFrame({
+        "Metric": metrics,
+        "Value": [match["away_total_shots"],match["away_sot"],match["away_corners"],match["away_offsides"],match["away_cards_yellow"],match["away_cards_red"]]
+    })
+
+
+    def create_stats_chart(data, color):
+        fig = px.bar(
+            data,
+            x="Value",
+            y="Metric",
+            orientation="h"
+        )
+
+        fig.update_traces(marker_color=color)
+
+        fig.update_layout(
+            height=300,
+            showlegend=False,
+            xaxis_title=None,
+            yaxis_title=None
+        )
+
+        return fig
+
+
+    chart_home = create_stats_chart(data_home, "#eb9736")
+    chart_away = create_stats_chart(data_away, "#36A2EB")
+
+
+    st.subheader(":material/percent: Possession",text_alignment="center")
+    st.altair_chart(chart, use_container_width=True)
+    
+    teamA, teamB=st.columns(2)
+    with teamA:
+        st.subheader(match_metrics["home_team"].iloc[0])
+        st.plotly_chart(chart_home, use_container_width=True,config={"displayModeBar": False})
+        #st.bar_chart(match_metrics,x="home_team",x_label=" ",y=["home_total_shots","home_sot","home_corners","home_offsides","home_cards_yellow","home_cards_red" ],horizontal=True,stack=False)
+    
+    with teamB:
+        st.subheader(match_metrics["away_team"].iloc[0])
+        #st.bar_chart(match_metrics,x="away_team",x_label=" ",y=["away_total_shots","away_sot","away_corners","away_offsides","away_cards_yellow","away_cards_red" ],horizontal=True,stack=False)
+        st.plotly_chart(chart_away, use_container_width=True,config={"displayModeBar": False})
+    
+    
+        
+    f1,f2=st.columns(2)
+    f1.metric(f"{match_metrics["home_team"].iloc[0]} formation", match_metrics["home_formation"].iloc[0],  border=True, icon=":material/tactic:")
+    f2.metric(f"{match_metrics["away_team"].iloc[0]} formation", match_metrics["away_formation"].iloc[0],  border=True, icon=":material/tactic:")
+
+    
+
+
+   
