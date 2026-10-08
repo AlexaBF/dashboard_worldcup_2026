@@ -17,17 +17,18 @@ df=load_data()
 
  
 
-tab1,tab2=st.tabs(["All Matches","Team Matches"])
+tab1,tab2=st.tabs([":material/select_all: All Matches",":material/select: Team Matches"])
 
 
 #--------------------------------------------------filtered rounds-----------------------------------------
 with tab1:
+    st.header(":material/select_all: All Matches")
     overview_df=df.copy()
 
     rounds = df["round"].unique().tolist()
     rounds.insert(0, "All")
 
-    selected_round = st.selectbox("Select round", rounds)
+    selected_round = st.selectbox(":material/filter_alt: Select round", rounds)
 
     if selected_round == "All":
         filtered_df = overview_df
@@ -49,10 +50,11 @@ with tab1:
     all_matches=filtered_df[["round","home_team","away_team","score","attendance","venue"]]
     st.dataframe(all_matches)
 
-    ta1, ta2, ta3, ta4, ta5 = st.tabs(["Overview","Goals","Match Stats","Discipline","Attendance"])
+    ta1, ta2, ta3, ta4, ta5 = st.tabs([":material/dashboard: Overview",":material/sports_soccer: Goals",":material/query_stats: Match Stats",":material/sports: Discipline",":material/crowdsource: Attendance"])
 
 #------------------------------------overview----------------------------------------------------
     with ta1:
+        st.header(":material/dashboard: Overview")
         #total matches, total goals, avg attendance)
         col1, col2, col3, col4 = st.columns(4)
         col1.metric("Matches", total_matches, border=True,icon=":material/calendar_month:")
@@ -148,9 +150,8 @@ with tab1:
 
 #---------------------------------------------------------------------------------------------------------------
 #-----------------------------------------------goals---------------------------------------------------------------
-
     with ta2:
-        
+        st.header(":material/sports_soccer: Goals")
         with st.container(border=True):
             st.subheader("Goals by Round")
             st.bar_chart(
@@ -294,6 +295,7 @@ with tab1:
 #------------------------------------------------------------------------------------
 #-------------------------------------------------------Match Stats------------------------------------------
     with ta3:
+        st.header(":material/query_stats: Match Statistics")
         def create_comparison_scatter(home_col,away_col,x_label,y_label):
             chart_df = filtered_df[["home_team","away_team","score",home_col,away_col]].copy()
 
@@ -317,8 +319,6 @@ with tab1:
             return fig
 
 
-
-        st.subheader("Match Statistics")
 
 
         # ---------------- POSSESSION ----------------
@@ -402,20 +402,11 @@ with tab1:
                 )
 
         
-
-        
-
-        
-
-       
-
-
-
-
-       
+   
 #--------------------------------------------------------------------------------------------------------------
 #-------------------------Discipline------------------------------------------------------------------------------------
     with ta4:
+        st.header(":material/sports: Discipline")
         cards_by_round = filtered_df.copy()
         #yellow cards
         cards_by_round["yellow_cards"]=(cards_by_round["home_cards_yellow"] +cards_by_round["away_cards_yellow"])
@@ -486,11 +477,9 @@ with tab1:
         
 
 
-
-        
-
 #-----------------------------------------------Attendance----------------------------------------------------------------------------------------------
     with ta5:
+        st.header(":material/crowdsource: Attendance")
         attendance_df=filtered_df.copy()
 
         attendance_df["attendance"]= pd.to_numeric(attendance_df["attendance"])
@@ -591,12 +580,13 @@ with tab1:
 #----------------------------------------------------------------------------------------------------------------------------
 #---------------------team matches
 with tab2:
+    st.header(":material/select: Team Matches")
 
     match_metrics=df.copy()
 
     team = match_metrics["home_team"].unique().tolist()
     team.sort()
-    selected_team= st.selectbox("Select team", team)
+    selected_team= st.selectbox(":material/filter_alt: Select team", team)
 
     mm_home = match_metrics[match_metrics["home_team"] == selected_team]
     mm_away = match_metrics[match_metrics["away_team"] == selected_team]
@@ -605,7 +595,7 @@ with tab2:
 
     dates = match_metrics["date"].unique().tolist()
     dates.sort()
-    selected_date = st.selectbox("Select date", dates)
+    selected_date = st.selectbox(":material/filter_alt: Select date", dates)
 
     match_metrics = match_metrics[match_metrics["date"] == selected_date]
     #st.dataframe(match_metrics)
