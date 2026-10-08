@@ -8,7 +8,7 @@ def load_data():
     df["attendance"] = df["attendance"].str.replace(",", "").astype(int)
     return df
 
-df=load_data()
+df_matches=load_data()
 
 st.title("Overview")
 
@@ -24,7 +24,7 @@ with col3:
 st.divider()
 
 #---------------------------------------------------------------------------------------------
-places=df[ ["round", "home_team", "away_team", "score", "home_score", "away_score"] ].copy()
+places=df_matches[ ["round", "home_team", "away_team", "score", "home_score", "away_score"] ].copy()
 # Final + 3rd-place matches
 finals = places[ places["round"].isin(["Final", "Third-place match"]) ].copy()
 # Find winner
@@ -62,31 +62,16 @@ st.divider()
 
 
 
-#--------------------------------------------------------------------------------------
-
-#--------------------------------------------------filtered rounds-----------------------------------------
-overview_df=df[["round","home_team", "away_team", "score", "attendance", "venue","referee", "home_formation","away_formation","home_manager","away_manager","home_captain","away_captain", "home_score", "away_score" ]].copy()
-
-rounds = df["round"].unique().tolist()
-rounds.insert(0, "All")
-
-selected_round = st.selectbox("Select round", rounds)
-
-if selected_round == "All":
-    filtered_df = overview_df
-else:
-    filtered_df = overview_df[overview_df["round"] == selected_round]
 #------------------------------------------------------------------------------------------------------------------------
 #total matches
-total_matches=len(filtered_df)
+total_matches=len(df_matches)
 #total goals
-total_goals=int( (filtered_df["home_score"] + filtered_df["away_score"]).sum() )
+total_goals=int( (df_matches["home_score"] + df_matches["away_score"]).sum() )
 #avg goals
-avg_goals=int( (filtered_df["home_score"] + filtered_df["away_score"]).mean() )
+avg_goals=int( (df_matches["home_score"] + df_matches["away_score"]).mean() )
 
 #avg attendance
-avg_attendance=filtered_df["attendance"].mean()
-#
+avg_attendance=df_matches["attendance"].mean()
 
 
 #total matches, total goals, avg attendance)
@@ -96,10 +81,8 @@ col2.metric("Total Goals", total_goals, border=True, icon=":material/sports_socc
 col3.metric("Average Attendance", f"{avg_attendance:,.0f}",border=True,icon=":material/event_seat:" )
 col4.metric("average goal", avg_goals,  border=True, icon=":material/sports_and_outdoors:")
 
-#tabla de datos
-st.dataframe(filtered_df)
 
-formations = pd.concat([filtered_df["home_formation"], filtered_df["away_formation"]])
+formations = pd.concat([df_matches["home_formation"], df_matches["away_formation"]])
 formation_counts = formations.value_counts().head(10)
 
 st.header("Most Common Formations")
