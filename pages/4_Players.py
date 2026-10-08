@@ -6,13 +6,12 @@ st.title(":material/recent_actors: PLAYERS")
 @st.cache_data
 def load_data():
     df=pd.read_csv("datasets/players.csv")
-    df['club'] = df['club'].fillna('No Club')
+    df["club"] = df["club"].fillna("No Club")
     df = df.fillna(0)
     df = df[df["position"] != "GK"]
     return df
 
 df=load_data()
-#st.dataframe(df)
 
 #------------------------------------------Top scorers------------------------------------------
 st.subheader(":material/social_leaderboard: Top Scorers")
@@ -184,7 +183,7 @@ with tab_all_players:
             
             #most goals contributions goals + assits
             values = st.slider("Select a range of values", 0, max_gc, (6,max_gc))
-            filtered_attack_df = attack_df[(attack_df["goals_assists"] >= values[0]) & (df["goals_assists"] <= values[1])]
+            filtered_attack_df = attack_df[(attack_df["goals_assists"] >= values[0]) & (attack_df["goals_assists"] <= values[1])]
             
             st.bar_chart(filtered_attack_df,
             x="player",
@@ -349,7 +348,7 @@ with tab_all_players:
         
         #tackles won players top 10
         with st.container(border=True):
-            sort_act_tackles = activity_df.sort_values(by='tackles_won', ascending=False)
+            sort_act_tackles = activity_df.sort_values(by="tackles_won", ascending=False)
             st.header("Top 10 tacklers")
             st.bar_chart(sort_act_tackles.head(10),
             x="player",
@@ -360,7 +359,7 @@ with tab_all_players:
 
         #crossers players top 10
         with st.container(border=True):
-            sort_act_tackles = activity_df.sort_values(by='crosses', ascending=False)
+            sort_act_tackles = activity_df.sort_values(by="crosses", ascending=False)
             st.header("Top 10 crossers")
             st.bar_chart(sort_act_tackles.head(10),
             x="player",
@@ -412,7 +411,7 @@ with tab_all_players:
             st.metric(label=":material/crop_2_3: Least Yellow Cards",
             value=ps_min_yellow_player,
             border=True,
-            delta= f"Cards: {ps_max_yellow:.0f}", delta_color="blue", delta_arrow="off")
+            delta= f"Cards: {ps_min_yellow:.0f}", delta_color="blue", delta_arrow="off")
 
             st.metric(label=":material/crop_2_3: Most Yellow Cards",
             value=ps_max_yellow_player,
@@ -423,7 +422,7 @@ with tab_all_players:
             st.metric(label=":material/crop_2_3: Least Red Cards",
             value=ps_min_red_player,
             border=True,
-            delta= f"Cards: {ps_max_red:.0f}", delta_color="blue", delta_arrow="off")
+            delta= f"Cards: {ps_min_red:.0f}", delta_color="blue", delta_arrow="off")
 
             st.metric(label=":material/crop_2_3: Most Red Cards",
             value=ps_max_red_player,
@@ -470,7 +469,7 @@ with tab_all_players:
 
         #most fouled
         with st.container(border=True):
-            sort_fouled= discipline_df.sort_values(by='fouled', ascending=False)
+            sort_fouled= discipline_df.sort_values(by="fouled", ascending=False)
             st.header("Top 10 most fouled players")
             st.bar_chart(sort_fouled.head(10),
             x="player",
@@ -481,9 +480,9 @@ with tab_all_players:
 
         #most fouls
         with st.container(border=True):
-            sort_fouls= discipline_df.sort_values(by='fouls', ascending=False)
+            sort_fouls= discipline_df.sort_values(by="fouls", ascending=False)
             st.header("Top 10 players with the most fouls")
-            st.bar_chart(sort_fouled.head(10),
+            st.bar_chart(sort_fouls.head(10),
             x="player",
             y="fouls",
             x_label="Player",
@@ -562,7 +561,9 @@ with tab_single_player:
             border=True, icon=":material/date_range:")
 
             ##minutes per game
-            minutes_pg=play_time_df.iloc[0]["minutes"]/play_time_df.iloc[0]["games"]
+            games = play_time_df.iloc[0]["games"]
+            minutes = play_time_df.iloc[0]["minutes"]
+            minutes_pg = minutes / games if games > 0 else 0
             st.metric(label="Minutes per game",
             value=f"{minutes_pg:.2f}",
             border=True, icon=":material/acute:")

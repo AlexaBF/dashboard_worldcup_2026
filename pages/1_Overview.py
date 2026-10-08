@@ -6,11 +6,16 @@ import numpy as np
 def load_data():
     df=pd.read_csv("datasets/matches.csv")
     df["attendance"] = df["attendance"].str.replace(",", "").astype(int)
-    return df
+    df_p=pd.read_csv("datasets/players.csv")
+    df_t=pd.read_csv("datasets/teams.csv")
+    return df,df_p,df_t
 
-df_matches=load_data()
+    
 
-st.title("Overview")
+df_matches,df_players,df_team=load_data()
+
+#------------------------------------------------------------------------------------------------------------
+st.title(":material/dashboard: Overview")
 
 st.caption("Datasets retrieved from Kaggle Datasets")
 col1, col2, col3 = st.columns(3)
@@ -53,15 +58,6 @@ n1.metric("Second Place", second_place,delta=final_score,delta_color="red", delt
 n3.metric("Third Place", third_place, delta=third_score, delta_arrow="off", border=True,icon=":material/trophy:")
 st.divider()
 #------------------------------------------------------------------------------------------------------
-
-#Number of players
-#Current top scorer
-#--------------------------------------------------------------------------------------
-#Number of teams
-#Top team
-
-
-
 #------------------------------------------------------------------------------------------------------------------------
 #total matches
 total_matches=len(df_matches)
@@ -73,21 +69,56 @@ avg_goals=int( (df_matches["home_score"] + df_matches["away_score"]).mean() )
 #avg attendance
 avg_attendance=df_matches["attendance"].mean()
 
+top_scorer=df_players.sort_values(by=["goals","assists"], ascending=False).head(1)
 
 #total matches, total goals, avg attendance)
 col1, col2, col3, col4 = st.columns(4)
-col1.metric("Total Matches", total_matches, border=True,icon=":material/calendar_month:")
-col2.metric("Total Goals", total_goals, border=True, icon=":material/sports_soccer:")
-col3.metric("Average Attendance", f"{avg_attendance:,.0f}",border=True,icon=":material/event_seat:" )
-col4.metric("average goal", avg_goals,  border=True, icon=":material/sports_and_outdoors:")
+with col1:
+    #Number of teams
+    st.metric(
+        "Total Teams",
+        len(df_team),
+        border=True,
+        icon=":material/flag:"
+        )
+    st.metric("Total Matches", total_matches, border=True,icon=":material/calendar_month:")
+
+with col2:
+    #Top team
+    st.metric(
+        "Top team",
+        first_place, 
+        border=True,
+        icon=":material/trophy:"
+    )
+    st.metric("Total Goals", total_goals, border=True, icon=":material/sports_soccer:")
+
+with col3:
+    #Number of players
+    st.metric(
+        "Total players",
+        len(df_players),
+        border=True,
+        icon=":material/group:"
+        )
+    st.metric("Average Attendance", f"{avg_attendance:,.0f}",border=True,icon=":material/event_seat:" )
+with col4:
+    #Current top scorer
+   
+    st.metric("Tops scorer",
+        value=top_scorer["player"].iloc[0],
+        border=True,
+        icon=":material/trophy:")
+    st.metric("average goal", avg_goals,  border=True, icon=":material/sports_and_outdoors:")
 
 
 formations = pd.concat([df_matches["home_formation"], df_matches["away_formation"]])
-formation_counts = formations.value_counts().head(10)
+formation_counts = formations.value_counts().head(5)
 
-st.header("Most Common Formations")
+
 with st.container(border=True):
-    st.bar_chart(formation_counts, x_label="Formation", y_label="Count")
+    st.header(":material/tactic: Most Common Formations")
+    st.bar_chart(formation_counts, x_label="Formation", y_label="Count", sort="-count")
 
 #------------------------------------------------------------------------------
 #Yellow cards
