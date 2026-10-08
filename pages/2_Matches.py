@@ -598,9 +598,11 @@ with tab2:
     selected_date = st.selectbox(":material/filter_alt: Select date", dates)
 
     match_metrics = match_metrics[match_metrics["date"] == selected_date]
-    #st.dataframe(match_metrics)
 
-    st.header(f"{match_metrics["home_team"].iloc[0]} | {match_metrics["score"].iloc[0]} | {match_metrics["away_team"].iloc[0]}",text_alignment="center")
+    h_team = match_metrics["home_team"].iloc[0]
+    a_team = match_metrics["away_team"].iloc[0]
+
+    st.header(f"{h_team} | {match_metrics["score"].iloc[0]} | {a_team}",text_alignment="center")
     
 
     c1,c2,c3=st.columns(3)
@@ -614,12 +616,12 @@ with tab2:
 
     col1, col2, col3 = st.columns(3)
     with col1:
-        st.metric(f"{match_metrics["home_team"].iloc[0]} Manager", match_metrics["home_manager"].iloc[0],  border=True, icon=":material/badge:")
-        st.metric(f"{match_metrics["home_team"].iloc[0]} Captain", match_metrics["home_captain"].iloc[0],  border=True, icon=":material/assignment_ind:")
+        st.metric(f"{h_team} Manager", match_metrics["home_manager"].iloc[0],  border=True, icon=":material/badge:")
+        st.metric(f"{h_team} Captain", match_metrics["home_captain"].iloc[0],  border=True, icon=":material/assignment_ind:")
 
     with col2:
-        st.metric(f"{match_metrics["away_team"].iloc[0]} Manager", match_metrics["away_manager"].iloc[0],  border=True, icon=":material/badge:")
-        st.metric(f"{match_metrics["away_team"].iloc[0]} Captain", match_metrics["away_captain"].iloc[0],  border=True, icon=":material/assignment_ind:")
+        st.metric(f"{a_team} Manager", match_metrics["away_manager"].iloc[0],  border=True, icon=":material/badge:")
+        st.metric(f"{a_team} Captain", match_metrics["away_captain"].iloc[0],  border=True, icon=":material/assignment_ind:")
 
     with col3:
         st.metric("Referee", match_metrics["referee"].iloc[0], border=True,icon=":material/sports:")
@@ -630,14 +632,12 @@ with tab2:
     st.header(":material/query_stats: Match Statistics")
 
     
-    home_team = match_metrics["home_team"].iloc[0]
-    away_team = match_metrics["away_team"].iloc[0]
 
     home_possession = match_metrics["home_possession"].iloc[0]
     away_possession = match_metrics["away_possession"].iloc[0]
 
     possession = pd.DataFrame({
-        "Team": [home_team, away_team],
+        "Team": [h_team, a_team],
         "Possession": [home_possession, away_possession],
         "Order": [1, 2]
     })
@@ -655,7 +655,7 @@ with tab2:
         color=alt.Color(
             "Team:N",
             scale=alt.Scale(
-                domain=[home_team, away_team],
+                domain=[h_team, a_team],
                 range=['#eb9736','#36A2EB']
             ),
             legend=None
@@ -728,18 +728,16 @@ with tab2:
     
     teamA, teamB=st.columns(2)
     with teamA:
-        st.subheader(match_metrics["home_team"].iloc[0])
+        st.subheader(h_team)
         st.plotly_chart(chart_home, use_container_width=True,config={"displayModeBar": False})
-        #st.bar_chart(match_metrics,x="home_team",x_label=" ",y=["home_total_shots","home_sot","home_corners","home_offsides","home_cards_yellow","home_cards_red" ],horizontal=True,stack=False)
     
     with teamB:
-        st.subheader(match_metrics["away_team"].iloc[0])
-        #st.bar_chart(match_metrics,x="away_team",x_label=" ",y=["away_total_shots","away_sot","away_corners","away_offsides","away_cards_yellow","away_cards_red" ],horizontal=True,stack=False)
+        st.subheader(a_team)
         st.plotly_chart(chart_away, use_container_width=True,config={"displayModeBar": False})
     
     
         
     f1,f2=st.columns(2)
-    f1.metric(f"{match_metrics["home_team"].iloc[0]} formation", match_metrics["home_formation"].iloc[0],  border=True, icon=":material/tactic:")
-    f2.metric(f"{match_metrics["away_team"].iloc[0]} formation", match_metrics["away_formation"].iloc[0],  border=True, icon=":material/tactic:")
+    f1.metric(f"{h_team} formation", match_metrics["home_formation"].iloc[0],  border=True, icon=":material/tactic:")
+    f2.metric(f"{a_team} formation", match_metrics["away_formation"].iloc[0],  border=True, icon=":material/tactic:")
   
