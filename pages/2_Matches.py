@@ -77,11 +77,7 @@ with tab1:
             default="Unknown"
         )
         
-        result_counts = (
-            hda["result"]
-            .value_counts()
-            .reindex(["Home Win", "Draw", "Away Win"], fill_value=0)
-        )
+        result_counts=(hda["result"].value_counts().reindex(["Home Win", "Draw", "Away Win"], fill_value=0))
 
         with st.container(border=True):
             st.subheader("Wins for home vs away team")
@@ -89,16 +85,14 @@ with tab1:
                 result_counts,
                 sort=False,
                 color="#f5a06e"
-        )  
+            )  
 
         #-------------------------------------------
 
         #-------------------------------------------goals by round
         round_goals = filtered_df[["round", "home_score", "away_score"]]
 
-        round_goals["total_goals"] = (
-            round_goals["home_score"] + round_goals["away_score"]
-        )
+        round_goals["total_goals"] = ( round_goals["home_score"] + round_goals["away_score"])
 
         round_goals = (
             round_goals
@@ -106,15 +100,7 @@ with tab1:
             .sum()
         )
 
-        round_order = [
-            "Group stage",
-            "Round of 32",
-            "Round of 16",
-            "Quarter-finals",
-            "Semi-finals",
-            "Third-place match",
-            "Final"
-        ]
+        round_order=["Group stage", "Round of 32", "Round of 16", "Quarter-finals", "Semi-finals", "Third-place match", "Final" ]
 
         round_goals["round"] = pd.Categorical(
             round_goals["round"],
@@ -122,8 +108,9 @@ with tab1:
             ordered=True
         )
 
-        round_goals = round_goals.sort_values("round")
+        round_goals=round_goals.sort_values("round")
 
+        #bar chart
         with st.container(border=True):
             st.subheader("Goals by Round")
             st.bar_chart(
@@ -143,8 +130,13 @@ with tab1:
         
         with st.container(border=True):
             st.header("Most Common Formations")
-            st.bar_chart(formation_counts, x_label="Formation", y_label="Count",sort="-count",
-            color="#60a394")
+            st.bar_chart(
+                formation_counts,
+                x_label="Formation",
+                y_label="Count",
+                sort="-count",
+                color="#60a394"
+            )
         #------------------------------------------------------------------------------------
 
 
@@ -164,11 +156,7 @@ with tab1:
             )
 
         #---------------------------------------------------------
-        score_counts = (
-            filtered_df["score"]
-            .value_counts()
-            .reset_index()
-        )
+        score_counts = (filtered_df["score"].value_counts().reset_index())
 
         score_counts.columns = ["score", "matches"]
 
@@ -183,85 +171,46 @@ with tab1:
             )
         #-------------------------------------------------
         
-        #----------------goals  vs shots----------------------------
-        home_stats = filtered_df[ ["home_team", "home_score", "home_total_shots"]].copy()
-        home_stats.columns = ["team", "goals", "shots"]
-
-        away_stats = filtered_df[ ["away_team", "away_score", "away_total_shots"] ].copy()
-        away_stats.columns = ["team", "goals", "shots"]
-
-        goals_shots_df = pd.concat([home_stats, away_stats],ignore_index=True)
-        goals_shots_df["goals"] = pd.to_numeric(goals_shots_df["goals"])
-        goals_shots_df["shots"] = pd.to_numeric( goals_shots_df["shots"] )
-        goals_shots_df = goals_shots_df.dropna( subset=["goals", "shots"])
-
-        fig = px.scatter(
-            goals_shots_df,
-            x="shots",
-            y="goals",
-            hover_name="team",
-            labels={
-                "shots": "Total Shots",
-                "goals": "Goals"
-            }
-        )
-
-        with st.container(border=True):
-            st.subheader("Goals vs Shots")
-
-            st.plotly_chart(
-                fig,
-                width="stretch"
-            )
-
-
-        
 
         #----goals vs shots by m,atch
-        def create_match_goals_vs_shots():
-            chart_df = filtered_df[ ["home_team","away_team","score","home_score","away_score","home_total_shots","away_total_shots"] ].copy()
+        chart_df = filtered_df[ ["home_team","away_team","score","home_score","away_score","home_total_shots","away_total_shots"] ].copy()
+        numeric_cols = ["home_score","away_score","home_total_shots","away_total_shots"]
+        for col in numeric_cols:
+            chart_df[col] = pd.to_numeric(chart_df[col])
 
-            numeric_cols = ["home_score","away_score","home_total_shots","away_total_shots"]
-            for col in numeric_cols:
-                chart_df[col] = pd.to_numeric(chart_df[col])
+        chart_df = chart_df.dropna(subset=numeric_cols)
 
-            chart_df = chart_df.dropna(subset=numeric_cols)
+        # Total goals in the match
+        chart_df["total_goals"] =( chart_df["home_score"] + chart_df["away_score"])
 
-            # Total goals in the match
-            chart_df["total_goals"] =( chart_df["home_score"] + chart_df["away_score"])
+        # Total shots in the match
+        chart_df["total_shots"] =(chart_df["home_total_shots"] + chart_df["away_total_shots"])
 
-            # Total shots in the match
-            chart_df["total_shots"] =(chart_df["home_total_shots"] + chart_df["away_total_shots"])
+        # Match name
+        chart_df["match"]=(chart_df["home_team"] + " vs " + chart_df["away_team"])
 
-            # Match name
-            chart_df["match"]=(chart_df["home_team"] + " vs " + chart_df["away_team"])
-
-            fig = px.scatter(
-                chart_df,
-                x="total_shots",
-                y="total_goals",
-                hover_name="match",
-                hover_data={
-                    "home_total_shots":True,
-                    "away_total_shots":True,
-                    "total_shots": True,
-                    "total_goals": True,
-                    "score": True
-                },
-                labels={
-                    "total_shots": "Total Shots",
-                    "total_goals": "Total Goals"
-                }
-            )
-
-            return fig
-
-        goals_shots_scatter = create_match_goals_vs_shots()
+        fig = px.scatter(
+            chart_df,
+            x="total_shots",
+            y="total_goals",
+            hover_name="match",
+            hover_data={
+                "home_total_shots":True,
+                "away_total_shots":True,
+                "total_shots": True,
+                "total_goals": True,
+                "score": True
+            },
+            labels={
+                "total_shots": "Total Shots",
+                "total_goals": "Total Goals"
+            }
+        )
+        
         with st.container(border=True):
             st.subheader("Goals vs Shots by Match")
-
             st.plotly_chart(
-                goals_shots_scatter,
+                fig,
                 width="stretch")
         
         
@@ -297,12 +246,12 @@ with tab1:
     with ta3:
         st.header(":material/query_stats: Match Statistics")
         def create_comparison_scatter(home_col,away_col,x_label,y_label):
-            chart_df = filtered_df[["home_team","away_team","score",home_col,away_col]].copy()
+            chart_df= filtered_df[["home_team","away_team","score",home_col,away_col]].copy()
 
-            chart_df[home_col] = pd.to_numeric(chart_df[home_col])
-            chart_df[away_col] = pd.to_numeric(chart_df[away_col])
-            chart_df = chart_df.dropna(subset=[home_col, away_col])
-            chart_df["match"] = (chart_df["home_team"]+ " vs "+ chart_df["away_team"])
+            chart_df[home_col]= pd.to_numeric(chart_df[home_col])
+            chart_df[away_col]= pd.to_numeric(chart_df[away_col])
+            chart_df= chart_df.dropna(subset=[home_col, away_col])
+            chart_df["match"]= ( chart_df["home_team"]+ " vs "+ chart_df["away_team"] )
 
             fig = px.scatter(
                 chart_df,
@@ -317,7 +266,6 @@ with tab1:
             )
 
             return fig
-
 
 
 
@@ -407,14 +355,16 @@ with tab1:
 #-------------------------Discipline------------------------------------------------------------------------------------
     with ta4:
         st.header(":material/sports: Discipline")
+
+
+        #------------------cards by round------------
         cards_by_round = filtered_df.copy()
         #yellow cards
         cards_by_round["yellow_cards"]=(cards_by_round["home_cards_yellow"] +cards_by_round["away_cards_yellow"])
-
         #red card
         cards_by_round["red_cards"] =(cards_by_round["home_cards_red"] +cards_by_round["away_cards_red"])
 
-        cards_by_round=(cards_by_round.groupby("round")[["yellow_cards", "red_cards"]].sum().reset_index().sort_values("round"))
+        cards_by_round=(cards_by_round.groupby("round")[["yellow_cards", "red_cards"]].sum().reset_index().sort_values("round"))    
 
         fig = px.bar(
             cards_by_round,
@@ -447,13 +397,14 @@ with tab1:
 
         col1,col2=st.columns(2)
         with col1:
+            #----------------------------------------yellow cards-----------------------------------
             with st.container(border=True):
                 st.subheader("Yellow cards: Home vs Away")
                 st.plotly_chart(
                     create_comparison_scatter("home_cards_yellow","away_cards_yellow","Home yellow cards","Away yellow cards"),
                     width="stretch"
                 )
-            
+            #-----------------------------------------------------offsides--------------------------------------------------------------
             with st.container(border=True):
                 st.subheader("Offsides: Home vs Away")
                 st.plotly_chart(
@@ -461,13 +412,14 @@ with tab1:
                     width="stretch"
                 )
         with col2:
+            #-------------------------------red cards--------------------------------------------------------------
             with st.container(border=True):
                 st.subheader("Red cards: Home vs Away")
                 st.plotly_chart(
                     create_comparison_scatter("home_cards_red","away_cards_red","Home red cards","Away red cards"),
                     width="stretch"
                 )
-
+            #-----------------------------------------Fouls--------------------------------------------------------------------
             with st.container(border=True):
                 st.subheader("Fouls: Home vs Away")
                 st.plotly_chart(
@@ -487,6 +439,8 @@ with tab1:
         attendance_df["match"]= ( attendance_df["home_team"]+ " vs "+ attendance_df["away_team"] )
 
         attendance_df = attendance_df.dropna(subset=["attendance"])
+
+        #-------------------------------attendance over time-------------------------------
         attendance_over_time = (attendance_df.groupby("date")["attendance"].mean().reset_index().sort_values("date"))
         
         fig = px.line(
@@ -507,6 +461,7 @@ with tab1:
                 width="stretch"
             )
 
+        #-------------------------------AVERAGE attendance by round-------------------------------
         attendance_by_round= (attendance_df.groupby("round")["attendance"].mean().reset_index().sort_values("round"))
         
         fig = px.bar(
@@ -529,7 +484,7 @@ with tab1:
                 width="stretch"
             )
 
-
+        #---------------------------------------------------Highest Attended Matches-----------
         highest_attendance=(attendance_df.sort_values("attendance", ascending=False).head(15).sort_values("attendance"))   
         fig = px.bar(
             highest_attendance,
@@ -551,9 +506,8 @@ with tab1:
                     fig,
                     width="stretch"
                 )
-        #-----
+        #---------------------------------------Lowest Attended Matches------------------------
         
-
         lowest_attendance=(attendance_df.sort_values("attendance", ascending=True).head(15).sort_values("attendance", ascending=False))
         fig = px.bar(
             lowest_attendance,
@@ -566,7 +520,6 @@ with tab1:
             },
             color="attendance"
         )
-        #--------
         
         with col2:
             with st.container(border=True):
@@ -584,6 +537,7 @@ with tab2:
 
     match_metrics=df.copy()
 
+    #------------------------team selection------------------------------------
     team = match_metrics["home_team"].unique().tolist()
     team.sort()
     selected_team= st.selectbox(":material/filter_alt: Select team", team)
@@ -592,7 +546,7 @@ with tab2:
     mm_away = match_metrics[match_metrics["away_team"] == selected_team]
     frames = [mm_home, mm_away]
     match_metrics = pd.concat(frames)
-
+    #------------------------------------date selection------------------------
     dates = match_metrics["date"].unique().tolist()
     dates.sort()
     selected_date = st.selectbox(":material/filter_alt: Select date", dates)
@@ -601,19 +555,21 @@ with tab2:
 
     h_team = match_metrics["home_team"].iloc[0]
     a_team = match_metrics["away_team"].iloc[0]
+    #------------------------------------------------------------------------
 
     st.header(f"{h_team} | {match_metrics["score"].iloc[0]} | {a_team}",text_alignment="center")
     
-
     c1,c2,c3=st.columns(3)
+    #------------------------------------match details------------------------
     with c1:
         st.caption(f":material/schedule: Date and Time:{match_metrics["date"].iloc[0]}, {match_metrics["start_time"].iloc[0]}",text_alignment="center")
     with c2:
         st.caption(f":material/globe_location_pin: Location: {match_metrics["venue"].iloc[0]}",text_alignment="center")
     with c3:
         st.caption(f":material/crowdsource: Attendance: {match_metrics["attendance"].iloc[0]}",text_alignment="center")
+    #------------------------
 
-
+    #------------------------------------match teams info------------------------------------
     col1, col2, col3 = st.columns(3)
     with col1:
         st.metric(f"{h_team} Manager", match_metrics["home_manager"].iloc[0],  border=True, icon=":material/badge:")
@@ -631,8 +587,7 @@ with tab2:
     st.divider()
     st.header(":material/query_stats: Match Statistics")
 
-    
-
+    #------------------------------------------------possesion------------------------------------
     home_possession = match_metrics["home_possession"].iloc[0]
     away_possession = match_metrics["away_possession"].iloc[0]
 
@@ -665,7 +620,7 @@ with tab2:
         height=50
     )
 
-
+    #------------------------------------match perdormance by team------------------------
     match = match_metrics.iloc[0]
     metrics = ["Red cards","Yellow cards","Offsides","Fouls","Corners","Crosses","Interceptions","Saves","Shots on target","Shots"]
 
@@ -721,7 +676,7 @@ with tab2:
 
     chart_home = create_stats_chart(data_home, "#eb9736")
     chart_away = create_stats_chart(data_away, "#36A2EB")
-
+    #------------------------------------------------------------------------------------
 
     st.subheader(":material/percent: Possession",text_alignment="center")
     st.altair_chart(chart, width="stretch")
@@ -736,7 +691,7 @@ with tab2:
         st.plotly_chart(chart_away, width="stretch",config={"displayModeBar": False})
     
     
-        
+    #formation 
     f1,f2=st.columns(2)
     f1.metric(f"{h_team} formation", match_metrics["home_formation"].iloc[0],  border=True, icon=":material/tactic:")
     f2.metric(f"{a_team} formation", match_metrics["away_formation"].iloc[0],  border=True, icon=":material/tactic:")
