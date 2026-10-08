@@ -211,7 +211,7 @@ with tab1:
 
             st.plotly_chart(
                 fig,
-                use_container_width=True
+                width="stretch"
             )
 
 
@@ -262,7 +262,7 @@ with tab1:
 
             st.plotly_chart(
                 goals_shots_scatter,
-                use_container_width=True)
+                width="stretch")
         
         
 
@@ -289,7 +289,7 @@ with tab1:
             st.subheader("Goals Scored per Day")
             st.plotly_chart(
                 fig,
-                use_container_width=True
+                width="stretch"
             )
 
 #------------------------------------------------------------------------------------
@@ -347,7 +347,7 @@ with tab1:
             st.subheader("Match possession")
             st.plotly_chart(
                 fig_possession,
-                use_container_width=True
+                width="stretch"
             )
 
         col1,col2=st.columns(2)
@@ -357,7 +357,7 @@ with tab1:
                 st.subheader("Shots: Home vs Away")
                 st.plotly_chart(
                     create_comparison_scatter("home_total_shots","away_total_shots","Home shots","Away shots"),
-                    use_container_width=True
+                    width="stretch"
                 )
 
             # ---------------- SAVES ----------------
@@ -365,7 +365,7 @@ with tab1:
                 st.subheader("Saves: Home vs Away")
                 st.plotly_chart(
                     create_comparison_scatter("home_saves","away_saves","Home saves","Away saves"),
-                    use_container_width=True
+                    width="stretch"
                 )
 
             # ---------------- CROSSES ----------------
@@ -373,7 +373,7 @@ with tab1:
                 st.subheader("Crosses: Home vs Away")
                 st.plotly_chart(
                     create_comparison_scatter("home_crosses","away_crosses","Home crosses","Away crosses"),
-                    use_container_width=True
+                    width="stretch"
                 )
 
         with col2:
@@ -382,7 +382,7 @@ with tab1:
                 st.subheader("Shots on Target: Home vs Away")
                 st.plotly_chart(
                     create_comparison_scatter("home_sot","away_sot","Home shots on target","Away shots on target"),
-                    use_container_width=True
+                    width="stretch"
                 )
 
             # ---------------- INTERCEPTIONS ----------------
@@ -390,7 +390,7 @@ with tab1:
                 st.subheader("Interceptions: Home vs Away")
                 st.plotly_chart(
                     create_comparison_scatter("home_interceptions","away_interceptions","Home interceptions","Away interceptions"),
-                    use_container_width=True
+                    width="stretch"
                 )
 
             # ---------------- CORNERS ----------------
@@ -398,7 +398,7 @@ with tab1:
                 st.subheader("Corners: Home vs Away")
                 st.plotly_chart(
                     create_comparison_scatter("home_corners","away_corners","Home corners","Away corners"),
-                    use_container_width=True
+                    width="stretch"
                 )
 
         
@@ -439,7 +439,7 @@ with tab1:
             st.subheader("Cards by Round")
             st.plotly_chart(
                 fig,
-                use_container_width=True,
+                width="stretch",
                 
             )
 
@@ -451,28 +451,28 @@ with tab1:
                 st.subheader("Yellow cards: Home vs Away")
                 st.plotly_chart(
                     create_comparison_scatter("home_cards_yellow","away_cards_yellow","Home yellow cards","Away yellow cards"),
-                    use_container_width=True
+                    width="stretch"
                 )
             
             with st.container(border=True):
                 st.subheader("Offsides: Home vs Away")
                 st.plotly_chart(
                     create_comparison_scatter("home_offsides","away_offsides","Home offsides","Away offsides"),
-                    use_container_width=True
+                    width="stretch"
                 )
         with col2:
             with st.container(border=True):
                 st.subheader("Red cards: Home vs Away")
                 st.plotly_chart(
                     create_comparison_scatter("home_cards_red","away_cards_red","Home red cards","Away red cards"),
-                    use_container_width=True
+                    width="stretch"
                 )
 
             with st.container(border=True):
                 st.subheader("Fouls: Home vs Away")
                 st.plotly_chart(
                     create_comparison_scatter("home_fouls","away_fouls","Home fouls","Away fouls"),
-                    use_container_width=True
+                    width="stretch"
                 )
         
 
@@ -504,7 +504,7 @@ with tab1:
             st.subheader("Attendance Over Time")
             st.plotly_chart(
                 fig,
-                use_container_width=True
+                width="stretch"
             )
 
         attendance_by_round= (attendance_df.groupby("round")["attendance"].mean().reset_index().sort_values("round"))
@@ -526,7 +526,7 @@ with tab1:
             st.subheader("Average Attendance by Round")
             st.plotly_chart(
                 fig,
-                use_container_width=True
+                width="stretch"
             )
 
 
@@ -549,7 +549,7 @@ with tab1:
                 st.subheader("Highest Attended Matches")
                 st.plotly_chart(
                     fig,
-                    use_container_width=True
+                    width="stretch"
                 )
         #-----
         
@@ -573,7 +573,7 @@ with tab1:
                 st.subheader("Lowest Attended Matches")
                 st.plotly_chart(
                     fig,
-                    use_container_width=True
+                    width="stretch"
                 )
     
     
@@ -724,16 +724,16 @@ with tab2:
 
 
     st.subheader(":material/percent: Possession",text_alignment="center")
-    st.altair_chart(chart, use_container_width=True)
+    st.altair_chart(chart, width="stretch")
     
     teamA, teamB=st.columns(2)
     with teamA:
         st.subheader(h_team)
-        st.plotly_chart(chart_home, use_container_width=True,config={"displayModeBar": False})
+        st.plotly_chart(chart_home, width="stretch",config={"displayModeBar": False})
     
     with teamB:
         st.subheader(a_team)
-        st.plotly_chart(chart_away, use_container_width=True,config={"displayModeBar": False})
+        st.plotly_chart(chart_away, width="stretch",config={"displayModeBar": False})
     
     
         
