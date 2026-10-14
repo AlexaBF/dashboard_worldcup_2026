@@ -70,7 +70,9 @@ with tab2:
 
         team_profile = st.selectbox(":material/filter_alt: Select a team",sorted(df["team"].unique()))
         filtered_team_profile = df[df["team"] == team_profile]
-        #st.dataframe(filtered_team_profile)
+        
+        df_team_selected=filtered_team_profile.copy()
+        team_metric = df_team_selected.iloc[0]
 
         #team profile metric
         tp1,tp2,tp3=st.columns(3)
@@ -78,37 +80,75 @@ with tab2:
         #group stage, round of 32 round of 16, Quarter finals, semi finals, third place match, final
 
         with tp1:
-            st.metric("Age Average", filtered_team_profile.iloc[0]['avg_age'],border=True,
+            st.metric("Age Average", team_metric["avg_age"],border=True,
             icon=":material/date_range:")
-            st.metric("Goals", filtered_team_profile.iloc[0]['goals'], border=True,
+            st.metric("Goals", team_metric["goals"], border=True,
             icon=":material/sports_and_outdoors:")
-            st.metric("Possession", f"{filtered_team_profile.iloc[0]['possession']} %", border=True,
+            st.metric("Possession", f"{team_metric["possession"]:.2f} %", border=True,
             icon=":material/percent:")
-            st.metric("Fouls", filtered_team_profile.iloc[0]['fouls'], border=True,
+            st.metric("Fouls", team_metric["fouls"], border=True,
             icon=":material/sports:")
         with tp2:
-            st.metric("Number of Players", filtered_team_profile.iloc[0]['players_used'], border=True,
+            st.metric("Number of Players", team_metric["players_used"], border=True,
             icon=":material/groups_2:")
-            st.metric("Goals Conceded", filtered_team_profile.iloc[0]['goals_against'], border=True,
+            st.metric("Goals Conceded", team_metric["goals_against"], border=True,
             icon=":material/sports_soccer:")
-            st.metric("Shots", filtered_team_profile.iloc[0]['shots'], border=True,
+            st.metric("Shots", team_metric["shots"], border=True,
             icon=":material/shoe_cleats:")
-            st.metric("Yellow Cards", filtered_team_profile.iloc[0]['cards_yellow'],border=True,
+            st.metric("Yellow Cards", team_metric["cards_yellow"],border=True,
             icon=":material/crop_2_3:")
 
         with tp3:
-            st.metric("Games played", filtered_team_profile.iloc[0]['games'], border=True,
+            st.metric("Games played", team_metric["games"], border=True,
             icon=":material/scoreboard:")
-            st.metric("Own Goals", filtered_team_profile.iloc[0]['own_goals'], border=True,
+            st.metric("Own Goals", team_metric["own_goals"], border=True,
             icon=":material/sports_soccer:")
-            st.metric("Shot Accuracy", f"{filtered_team_profile.iloc[0]['shots_on_target_pct']} %", border=True,
+            st.metric("Shot Accuracy", f"{team_metric["shots_on_target_pct"]:.2f} %", border=True,
             icon=":material/percent:")
-            st.metric("Red Cards", filtered_team_profile.iloc[0]['cards_red'],border=True,
+            st.metric("Red Cards", team_metric["cards_red"],border=True,
             icon=":material/crop_2_3:")
-        
 
+    c1,c2=st.columns(2)
+    with c1:
+        with st.container(border=True):
+            st.subheader("Goals Comparison")
 
+            st.bar_chart(
+                df_team_selected,
+                x="team",
+                y=["goals","goals_against"],
+                stack=False,
+                color=["orange","blue"]
+                )
+        with st.container(border=True):
+            st.subheader("Possession Comparison")
 
+            st.bar_chart(
+                df_team_selected,
+                x="team",
+                y=["possession","possession_against"],
+                stack=False,
+                color=["orange","blue"]
+            )
+    with c2:
+        with st.container(border=True):
+            st.subheader("Shooting Statistics")
+            st.bar_chart(
+                df_team_selected,
+                x="team",
+                y=["shots","shots_on_target"],
+                stack=False
+                )
+
+        with st.container(border=True):
+            st.subheader("Defensive")
+
+            st.bar_chart(
+                df_team_selected,
+                x="team",
+                y=["fouls","tackles_won"],
+                stack=False
+            )
 #-------------------------------------Teams-------------
 with tab1:
     with st.container(border=True):
