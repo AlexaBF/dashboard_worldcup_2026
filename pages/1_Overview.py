@@ -1,6 +1,8 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
+import plotly.express as px
+
 
 @st.cache_data
 def load_data():
@@ -57,6 +59,10 @@ n1,n2,n3 = st.columns(3)
 n2.metric("First Place", first_place, delta=final_score, delta_arrow="off" , border=True,icon=":material/trophy:")
 n1.metric("Second Place", second_place,delta=final_score,delta_color="red", delta_arrow="off", border=True,icon=":material/trophy:")
 n3.metric("Third Place", third_place, delta=third_score, delta_arrow="off", border=True,icon=":material/trophy:")
+
+st.metric(label="Host Countries", value="CANADA , MÉXICO, USA", border=True, icon=":material/globe_location_pin:")
+
+
 st.divider()
 #------------------------------------------------------------------------------------------------------
 #------------------------------------------------------------------------------------------------------------------------
@@ -135,3 +141,33 @@ with st.container(border=True):
     st.bar_chart(formation_counts, x_label="Formation", y_label="Count", sort="-count")
 
 
+
+teams_goals=df_team[["team","goals","minutes"]].copy().reset_index()
+with st.container(border=True):
+    st.header(":material/sports_soccer: Teams: goals scored vs minutes")
+    st.scatter_chart(
+        teams_goals,
+        x="goals",
+        x_label="Goals",
+        y="minutes",
+        y_label="Minutes",
+        color="team"
+    )
+
+players_age=df_players[["player","age","team","minutes"]].copy().reset_index()
+fig = px.scatter(
+    players_age,
+    x="age",
+    y="minutes",
+    color="player",
+    hover_data=["team"],
+    labels={
+        "age":"Age",
+        "player":"Player",
+        "minutes":"Minutes played",
+        "team":"Team"
+    }
+    )
+with st.container(border=True):
+    st.header(":material/emoji_people: Players: age and minutes played")
+    st.plotly_chart(fig)
