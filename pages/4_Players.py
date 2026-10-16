@@ -21,13 +21,13 @@ top_scorers=df.sort_values(by=["goals","assists"], ascending=False).head(3)
 #podium of top scorers
 s_place1,s_place2,s_place3 = st.columns(3)
 with s_place1:
-    st.metric( label="2nd Place", value=top_scorers["player"].iloc[1],
-    delta=f"Goals: {top_scorers["goals"].iloc[1]:.0f}", delta_arrow="off",
+    st.metric( label="1st Place", value=top_scorers["player"].iloc[0],
+    delta=f"Goals: {top_scorers["goals"].iloc[0]:.0f}", delta_arrow="off",
     border=True, icon=":material/trophy:")
 
 with s_place2:
-    st.metric( label="1st Place", value=top_scorers["player"].iloc[0],
-    delta=f"Goals: {top_scorers["goals"].iloc[0]:.0f}", delta_arrow="off",
+    st.metric( label="2nd Place", value=top_scorers["player"].iloc[1],
+    delta=f"Goals: {top_scorers["goals"].iloc[1]:.0f}", delta_arrow="off",
     border=True, icon=":material/trophy:")
     
 with s_place3:
@@ -42,15 +42,15 @@ top_assists=df.sort_values(by=["assists","goals"], ascending=False).head(3)
 #podium of top assists
 a_place1,a_place2,a_place3 = st.columns(3)
 with a_place1:
-    st.metric( label="2nd Place", value=top_assists["player"].iloc[1],
-    delta=f"Assists: {top_assists["assists"].iloc[1]:.0f}", delta_arrow="off",
-    border=True, icon=":material/trophy:")
-
-with a_place2:
     st.metric( label="1st Place", value=top_assists["player"].iloc[0],
     delta=f"Assists: {top_assists["assists"].iloc[0]:.0f}", delta_arrow="off",
     border=True, icon=":material/trophy:")
     
+with a_place2:
+    st.metric( label="2nd Place", value=top_assists["player"].iloc[1],
+    delta=f"Assists: {top_assists["assists"].iloc[1]:.0f}", delta_arrow="off",
+    border=True, icon=":material/trophy:")
+
 with a_place3:
     st.metric( label="3rd Place", value=top_assists["player"].iloc[2],
     delta=f"Assists: {top_assists["assists"].iloc[2]:.0f}", delta_arrow="off",
