@@ -2,6 +2,8 @@
 
 An interactive dashboard built with Streamlit to explore FIFA World Cup matches , teams, players, goalkeepers and venue information.
 
+Live demo: https://dashboardworldcup2026.streamlit.app
+
 ## Pages
 
 **Overview:** Tournament statistics, podium results, common formations, and team and player visualizations.
